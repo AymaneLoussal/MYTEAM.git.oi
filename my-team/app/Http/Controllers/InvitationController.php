@@ -251,3 +251,4 @@ class InvitationController extends Controller
         return strtolower($invitation->email) !== strtolower($user->email);
     }
 }
+// InvitationController Docblock placeholder 
