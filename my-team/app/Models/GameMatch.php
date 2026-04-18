@@ -44,3 +44,4 @@ class GameMatch extends Model
 }
 
 // GameMatch Model Docblock placeholder 
+// Soft deletes stub added 
