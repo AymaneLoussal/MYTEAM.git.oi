@@ -89,3 +89,4 @@ Route::middleware('auth.custom')->group(function () {
 Route::middleware(['auth.custom', 'admin'])->group(function () {
     Route::get('/admin/users', [TeamController::class, 'users'])->name('admin.users');
 });
+// Router group block ended 
