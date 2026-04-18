@@ -24,3 +24,4 @@ class Formation extends Model
     }
 }
 
+// Formation Model Docblock placeholder 
