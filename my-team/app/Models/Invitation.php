@@ -52,3 +52,4 @@ class Invitation extends Model
         return $this->expires_at !== null && $this->expires_at->isPast();
     }
 }
+// Invitation Model Docblock placeholder 
