@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="C:\Users\safiy\Documents\Far9ti\my-team\phpunit.xml" tests="8" assertions="2" errors="6" failures="0" skipped="0" time="0.224757">
+    <testsuite name="Unit" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.001433">
+      <testsuite name="Tests\Unit\ExampleTest" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Unit\ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.001433">
+        <testcase name="test_that_true_is_true" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Unit\ExampleTest.php" line="12" class="Tests\Unit\ExampleTest" classname="Tests.Unit.ExampleTest" assertions="1" time="0.001433"/>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="7" assertions="1" errors="6" failures="0" skipped="0" time="0.223324">
+      <testsuite name="Tests\Feature\ExampleTest" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.223324">
+        <testcase name="test_the_application_returns_a_successful_response" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\ExampleTest.php" line="13" class="Tests\Feature\ExampleTest" classname="Tests.Feature.ExampleTest" assertions="1" time="0.223324"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\FormationTest" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\FormationTest.php" tests="2" assertions="0" errors="2" failures="0" skipped="0" time="0.000000">
+        <testcase name="test_coach_can_create_formation" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\FormationTest.php" line="15" class="Tests\Feature\FormationTest" classname="Tests.Feature.FormationTest" assertions="0" time="0.000000">
+          <error type="Illuminate\Database\QueryException">Tests\Feature\FormationTest::test_coach_can_create_formation&#13;
+Illuminate\Database\QueryException: could not find driver (Connection: sqlite, Database: :memory:, SQL: select exists (select 1 from "main".sqlite_master where name = 'migrations' and type = 'table') as "exists")
+&#13;
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:841
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:797
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:412
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:357
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:374
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Schema\Builder.php:176
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\DatabaseMigrationRepository.php:185
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:758
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Support\helpers.php:328
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:142
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:112
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:671
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:111
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:90
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:68
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:29
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\FreshCommand.php:88
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:1094
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:356
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:195
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Application.php:165
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php:447
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:451
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:675
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithConsole.php:87
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:119
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:84
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:25
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:223
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:104
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\TestCase.php:63</error>
+        </testcase>
+        <testcase name="test_player_cannot_create_formation" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\FormationTest.php" line="35" class="Tests\Feature\FormationTest" classname="Tests.Feature.FormationTest" assertions="0" time="0.000000">
+          <error type="Illuminate\Database\QueryException">Tests\Feature\FormationTest::test_player_cannot_create_formation&#13;
+Illuminate\Database\QueryException: could not find driver (Connection: sqlite, Database: :memory:, SQL: select exists (select 1 from "main".sqlite_master where name = 'migrations' and type = 'table') as "exists")
+&#13;
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:841
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:797
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:412
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:357
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:374
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Schema\Builder.php:176
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\DatabaseMigrationRepository.php:185
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:758
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Support\helpers.php:328
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:142
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:112
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:671
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:111
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:90
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:68
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:29
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\FreshCommand.php:88
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:1094
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:356
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:195
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Application.php:165
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php:447
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:451
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:675
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithConsole.php:87
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:119
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:84
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:25
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:223
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:104
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\TestCase.php:63</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\InvitationTest" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\InvitationTest.php" tests="2" assertions="0" errors="2" failures="0" skipped="0" time="0.000000">
+        <testcase name="test_coach_can_send_invitation" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\InvitationTest.php" line="15" class="Tests\Feature\InvitationTest" classname="Tests.Feature.InvitationTest" assertions="0" time="0.000000">
+          <error type="Illuminate\Database\QueryException">Tests\Feature\InvitationTest::test_coach_can_send_invitation&#13;
+Illuminate\Database\QueryException: could not find driver (Connection: sqlite, Database: :memory:, SQL: select exists (select 1 from "main".sqlite_master where name = 'migrations' and type = 'table') as "exists")
+&#13;
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:841
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:797
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:412
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:357
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:374
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Schema\Builder.php:176
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\DatabaseMigrationRepository.php:185
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:758
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Support\helpers.php:328
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:142
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:112
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:671
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:111
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:90
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:68
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:29
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\FreshCommand.php:88
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:1094
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:356
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:195
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Application.php:165
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php:447
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:451
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:675
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithConsole.php:87
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:119
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:84
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:25
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:223
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:104
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\TestCase.php:63</error>
+        </testcase>
+        <testcase name="test_user_can_accept_invitation" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\InvitationTest.php" line="35" class="Tests\Feature\InvitationTest" classname="Tests.Feature.InvitationTest" assertions="0" time="0.000000">
+          <error type="Illuminate\Database\QueryException">Tests\Feature\InvitationTest::test_user_can_accept_invitation&#13;
+Illuminate\Database\QueryException: could not find driver (Connection: sqlite, Database: :memory:, SQL: select exists (select 1 from "main".sqlite_master where name = 'migrations' and type = 'table') as "exists")
+&#13;
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:841
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:797
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:412
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:357
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:374
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Schema\Builder.php:176
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\DatabaseMigrationRepository.php:185
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:758
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Support\helpers.php:328
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:142
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:112
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:671
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:111
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:90
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:68
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:29
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\FreshCommand.php:88
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:1094
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:356
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:195
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Application.php:165
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php:447
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:451
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:675
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithConsole.php:87
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:119
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:84
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:25
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:223
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:104
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\TestCase.php:63</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\TeamManagementTest" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\TeamManagementTest.php" tests="2" assertions="0" errors="2" failures="0" skipped="0" time="0.000000">
+        <testcase name="test_user_cannot_create_team_if_already_coaching" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\TeamManagementTest.php" line="14" class="Tests\Feature\TeamManagementTest" classname="Tests.Feature.TeamManagementTest" assertions="0" time="0.000000">
+          <error type="Illuminate\Database\QueryException">Tests\Feature\TeamManagementTest::test_user_cannot_create_team_if_already_coaching&#13;
+Illuminate\Database\QueryException: could not find driver (Connection: sqlite, Database: :memory:, SQL: select exists (select 1 from "main".sqlite_master where name = 'migrations' and type = 'table') as "exists")
+&#13;
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:841
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:797
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:412
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:357
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:374
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Schema\Builder.php:176
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\DatabaseMigrationRepository.php:185
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:758
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Support\helpers.php:328
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:142
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:112
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:671
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:111
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:90
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:68
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:29
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\FreshCommand.php:88
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:1094
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:356
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:195
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Application.php:165
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php:447
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:451
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:675
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithConsole.php:87
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:119
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:84
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:25
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:223
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:104
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\TestCase.php:63</error>
+        </testcase>
+        <testcase name="test_player_can_leave_team" file="C:\Users\safiy\Documents\Far9ti\my-team\tests\Feature\TeamManagementTest.php" line="28" class="Tests\Feature\TeamManagementTest" classname="Tests.Feature.TeamManagementTest" assertions="0" time="0.000000">
+          <error type="Illuminate\Database\QueryException">Tests\Feature\TeamManagementTest::test_player_can_leave_team&#13;
+Illuminate\Database\QueryException: could not find driver (Connection: sqlite, Database: :memory:, SQL: select exists (select 1 from "main".sqlite_master where name = 'migrations' and type = 'table') as "exists")
+&#13;
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:841
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:797
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:412
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:357
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Connection.php:374
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Schema\Builder.php:176
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\DatabaseMigrationRepository.php:185
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:758
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Support\helpers.php:328
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:166
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:142
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:112
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Migrations\Migrator.php:671
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:111
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\MigrateCommand.php:90
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:68
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Concerns\CallsCommands.php:29
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Database\Console\Migrations\FreshCommand.php:88
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:36
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Util.php:43
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:96
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php:35
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Container\Container.php:799
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:273
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Command\Command.php:341
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Command.php:242
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:1094
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:356
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\symfony\console\Application.php:195
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Console\Application.php:165
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php:447
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:451
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Testing\PendingCommand.php:675
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithConsole.php:87
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:119
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:84
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\RefreshDatabase.php:25
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:223
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\Concerns\InteractsWithTestCaseLifecycle.php:104
+C:\Users\safiy\Documents\Far9ti\my-team\vendor\laravel\framework\src\Illuminate\Foundation\Testing\TestCase.php:63</error>
+        </testcase>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

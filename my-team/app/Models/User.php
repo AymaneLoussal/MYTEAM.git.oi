@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 #[Fillable(['name', 'email', 'password', 'avatar'])]
 #[Hidden(['password', 'remember_token'])]
@@ -16,7 +17,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = ['name', 'email', 'password', 'avatar'];
+protected $fillable = ['name', 'email', 'password', 'avatar', 'notes'];
 
     protected $appends = ['avatar_url'];
 
@@ -60,14 +61,10 @@ class User extends Authenticatable
      */
     public function getAvatarUrlAttribute(): ?string
     {
-        return $this->avatar ? Storage::url($this->avatar) : asset('images/default-avatar.png');
+        return $this->avatar ? Storage::url($this->avatar) : asset('images/default-avatar.svg');
     }
     public function userInvitations()
     {
         return $this->hasMany(Invitation::class);
     }
 }
-
-
-use Illuminate\Support\Facades\Storage;
-

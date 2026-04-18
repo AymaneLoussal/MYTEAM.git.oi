@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Formation;
 use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model
@@ -29,8 +30,23 @@ class Team extends Model
     /**
      * Invitations related to this team.
      */
-    public function TeamInvitations()
+    public function invitations()
     {
         return $this->hasMany(Invitation::class);
+    }
+
+    public function trainings()
+    {
+        return $this->hasMany(Training::class);
+    }
+
+    public function matches()
+    {
+        return $this->hasMany(GameMatch::class);
+    }
+
+    public function formations()
+    {
+        return $this->hasMany(Formation::class);
     }
 }

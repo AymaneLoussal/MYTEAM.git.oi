@@ -22,9 +22,12 @@ class TeamController extends Controller
         $userId = session('user_id');
         $user = User::find($userId);
         
-        return response()->json([
-            'coach_teams' => $user->coachTeams,
-            'player_teams' => $user->playerTeams
+        $coachTeams = $user->coachTeams()->with('players', 'coach')->latest()->get();
+        $playerTeams = $user->playerTeams()->with('players', 'coach')->latest()->get();
+
+        return view('teams.index', [
+            'coachTeams' => $coachTeams,
+            'playerTeams' => $playerTeams,
         ]);
     }
 
@@ -69,4 +72,62 @@ class TeamController extends Controller
     {
         return response()->json(User::all(['id', 'name', 'email', 'is_admin']));
     }
+
+    /**
+     * Coach-only: Update player notes for team member.
+     */
+    public function updatePlayerNotes(Request $request, Team $team, User $player)
+    {
+        $this->authorize('manage', $team);
+        
+        $validated = $request->validate([
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $player->update(['notes' => $validated['notes']]);
+
+        return back()->with('status', 'Notes updated for ' . $player->name);
+    }
+
+    /**
+     * Show single team with players (for notes).
+     */
+    public function show(Team $team)
+    {
+        $user = User::find(session('user_id'));
+        
+        if (! $this->canViewTeam($user, $team)) {
+            abort(403);
+        }
+
+        $players = $team->players()->get();
+
+        return view('teams.show', [
+            'team' => $team->load('coach'),
+            'players' => $players,
+            'isCoach' => $team->coach_id === $user->id,
+            'notes' => $players->pluck('notes', 'id')->toArray(),
+        ]);
+    }
+
+    private function canViewTeam(User $user, Team $team): bool
+    {
+        return $team->coach_id === $user->id || $team->players()->where('user_id', $user->id)->exists();
+    }
+
+    public function leave(Team $team)
+    {
+        $user = User::find(session('user_id'));
+
+        // Verify user is a player in this team
+        if (!$team->players()->where('user_id', $user->id)->exists()) {
+            return back()->withErrors(['error' => 'You are not a member of this team.']);
+        }
+
+        // Remove player from team
+        $team->players()->detach($user->id);
+
+        return redirect()->route('teams.index')->with('status', 'You have left the team successfully.');
+    }
 }
+

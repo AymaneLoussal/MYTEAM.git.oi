@@ -1,11 +1,9 @@
-# Football Team Management API
+# FTMBALL (Football Team Manager)
 
-Custom Laravel 11 app - session auth, dynamic teams, profile. No auth packages!
+Laravel 13 app (no Spatie/Livewire/Voyager/EasyPanel/DataTables). Custom session auth, teams, profile, admin flag, invitations, trainings, and matches.
 
-## 🚀 Quick Start
-```
-git clone ...
-cd my-team
+## Quick Start
+```bash
 composer install
 cp .env.example .env
 php artisan key:generate
@@ -16,74 +14,55 @@ php artisan serve
 
 Admin: `admin@team.com` / `adminpass`
 
-## 📊 DB Schema
-- **users**: id, name, email(unique), avatar(null), password(hashed), is_admin(default false)
-- **teams**: id, name, coach_id(FK users), timestamps
-- **team_user**: team_id(FK), user_id(FK), unique(team,user) pivot
+## Implemented Features
+- Custom session authentication (register/login/logout)
+- Browser UI pages (login, register, dashboard)
+- Team creation and joining (coach and player roles via relations)
+- Profile update (name/email/password) + avatar upload
+- Admin middleware (boolean `is_admin`) + list users
+- Team invitations by email (token link + accept/reject)
+- Training scheduling (coach) + training viewing (players)
+- Match scheduling (coach) + lineup roles (starter/sub/not selected)
 
-## 🔐 Auth Logic (Custom Session)
-1. **Register** POST /register {name,email,password} → hashed pw
-2. **Login** POST /login {email,pw} → Hash::check + session('user_id') + regenerate (anti-fixation)
-3. **Logout** POST /logout → forget session
-- Middleware: Auth (session + user exists), Admin (is_admin)
+## Main Routes (web.php)
+- `GET /login`
+- `GET /register`
+- `GET /dashboard` (auth)
+- `POST /register`
+- `POST /login`
+- `POST /logout` (auth)
+- `GET /teams` (auth)
+- `POST /teams` (auth)
+- `POST /teams/{team}/join` (auth)
+- `PATCH /profile` (auth)
+- `POST /teams/{team}/invite` (auth)
+- `GET /invitations` (auth)
+- `GET /invitations/{token}` (public page)
+- `POST|PATCH /invitations/{token}/accept` (auth)
+- `POST|PATCH /invitations/{token}/reject` (auth)
+- `GET /trainings` (auth)
+- `GET /teams/{team}/trainings` (auth)
+- `GET /teams/{team}/trainings/create` (auth, coach)
+- `POST /teams/{team}/trainings` (auth, coach)
+- `GET /trainings/{training}` (auth)
+- `GET /trainings/{training}/edit` (auth, coach)
+- `PATCH /trainings/{training}` (auth, coach)
+- `DELETE /trainings/{training}` (auth, coach)
+- `GET /matches` (auth)
+- `GET /teams/{team}/matches` (auth)
+- `GET /teams/{team}/matches/create` (auth, coach)
+- `POST /teams/{team}/matches` (auth, coach)
+- `GET /matches/{match}` (auth)
+- `GET /matches/{match}/edit` (auth, coach)
+- `PATCH /matches/{match}` (auth, coach)
+- `GET /matches/{match}/lineup` (auth, coach)
+- `PATCH /matches/{match}/lineup` (auth, coach)
+- `DELETE /matches/{match}` (auth, coach)
+- `GET /admin/users` (admin)
 
-## ⚽ Team Dynamic Roles
-- **Coach**: Create team → coach_id = me (User::coachTeams())
-- **Player**: Join → team_user attach (User::playerTeams())
-- Unique pivot prevents dup joins
-- Policy: Coach manage own team
+## Notes
+- Default avatar asset: `public/images/default-avatar.svg`
+- Policies are registered in `app/Providers/AuthServiceProvider.php`
 
-## 👤 Profile Management
-- PATCH /profile {name?,email?,avatar(image)?,password?}
-- Upload → storage/app/public/avatars + delete old
-- avatar_url accessor → /storage/avatars/xx.jpg or default
-- Password optional + confirmed/hash
 
-## 📋 API Endpoints
-| Method | Endpoint | Auth | Desc |
-|--------|----------|------|------|
-| POST | /register | - | Create user |
-| POST | /login | - | Login session |
-| POST | /logout | auth | Logout |
-| PATCH | /profile | auth | Update profile/avatar |
-| GET | /teams | auth | List coach/player teams |
-| POST | /teams | auth | Create team (coach) |
-| POST | /teams/{id}/join | auth | Join as player |
-| GET | /admin/users | admin | List users |
-
-## 🧪 Test Example (curl)
-```
-# Login
-curl -X POST http://127.0.0.1:8000/login -d '{"email":"test@test.com","password":"pass"}' -H "Content-Type: app/json" -c cookies.txt
-
-# Profile w/ avatar
-curl -X PATCH http://127.0.0.1:8000/profile -b cookies.txt -F "name=Updated" -F "avatar=@photo.jpg"
-
-# Teams
-curl http://127.0.0.1:8000/teams -b cookies.txt
-```
-
-## 🎯 Validations & Security
-- All inputs validated (unique/email/image/size/min/confirmed)
-- Hash::make/check
-- Session regenerate
-- FK cascade
-- Pivot unique
-- Policies coach manage
-- User exists check (deleted session invalid)
-
-## 📈 Scalability
-Easy add:
-- Matches: matches table team_id x team_id
-- Invites: invites team_id/user_id/status
-- Chat: messages morphTo team/user
-- Events/notifs: Laravel events/queues
-
-## Notes (Junior Dev)
-- Pure Laravel - no Sanctum (session API ok)
-- Linter errors ignore (middleware authorize in L11 needs AuthServiceProvider)
-- Default avatar: public/images/default-avatar.png (add)
-- Prod: SESSION_DRIVER=database, storage perms
-
-Project 100%! 🚀
 

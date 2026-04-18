@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -91,7 +90,7 @@
 <div class="flex items-center gap-12">
 <span class="text-2xl font-black tracking-tighter text-[#a1d494] font-headline">FTMBALL</span>
 <div class="hidden md:flex items-center gap-8">
-<a class="text-[#a1d494] font-bold text-sm font-label uppercase tracking-wider" href="#">Dashboard</a>
+<a class="text-[#a1d494] font-bold text-sm font-label uppercase tracking-wider" href="register">Dashboard</a>
 <a class="text-[#b9cbbe] hover:bg-[#282a29] transition-colors duration-200 px-3 py-1 rounded text-sm font-label uppercase tracking-wider" href="#">Squad</a>
 <a class="text-[#b9cbbe] hover:bg-[#282a29] transition-colors duration-200 px-3 py-1 rounded text-sm font-label uppercase tracking-wider" href="#">Tactics</a>
 <a class="text-[#b9cbbe] hover:bg-[#282a29] transition-colors duration-200 px-3 py-1 rounded text-sm font-label uppercase tracking-wider" href="#">Fixtures</a>

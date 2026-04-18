@@ -18,6 +18,16 @@ class ProfileController extends Controller
     }
 
     /**
+     * Show profile edit form.
+     */
+    public function show()
+    {
+        $userId = session('user_id');
+        $user = User::findOrFail($userId);
+        return view('profile.show', ['user' => $user]);
+    }
+
+    /**
      * Update authenticated user profile.
      * - Optional: name, email (unique), avatar upload (avatars/public), password (hashed if provided).
      * - Avatar stored as path, accessor provides URL.

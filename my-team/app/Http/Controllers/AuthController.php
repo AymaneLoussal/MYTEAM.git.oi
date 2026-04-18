@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    private function wantsJson(Request $request): bool
+    {
+        return $request->expectsJson() || $request->is('api/*');
+    }
+
     /**
      * Register new user - validates input, hashes password, creates user record.
      * No login automatic - client must call login next.
@@ -26,7 +31,11 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return response()->json(['message' => 'User created successfully', 'user_id' => $user->id]);
+        if ($this->wantsJson($request)) {
+            return response()->json(['message' => 'User created successfully', 'user_id' => $user->id]);
+        }
+
+        return redirect()->route('login.form')->with('status', 'Account created. Please sign in.');
     }
 
     /**
@@ -43,13 +52,23 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            if ($this->wantsJson($request)) {
+                return response()->json(['message' => 'Invalid credentials'], 401);
+            }
+
+            return back()
+                ->withErrors(['email' => 'Invalid credentials'])
+                ->onlyInput('email');
         }
 
         session(['user_id' => $user->id]);
         session()->regenerate(); // Prevent session fixation
 
-        return response()->json(['message' => 'Login successful', 'user' => $user->only('id', 'name', 'email')]);
+        if ($this->wantsJson($request)) {
+            return response()->json(['message' => 'Login successful', 'user' => $user->only('id', 'name', 'email')]);
+        }
+
+        return redirect()->route('dashboard');
     }
 
     /**
@@ -60,6 +79,10 @@ class AuthController extends Controller
     {
         session()->forget('user_id');
 
-        return response()->json(['message' => 'Logout successful']);
+        if ($this->wantsJson($request)) {
+            return response()->json(['message' => 'Logout successful']);
+        }
+
+        return redirect('/');
     }
 }

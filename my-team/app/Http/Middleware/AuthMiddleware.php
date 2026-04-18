@@ -18,7 +18,11 @@ class AuthMiddleware
     {
         $userId = session('user_id');
         if (!$userId || !($user = User::find($userId))) {
-            return redirect('/login');
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json(['message' => 'Unauthenticated'], 401);
+            }
+
+            return redirect()->route('login.form');
         }
 
         return $next($request);
