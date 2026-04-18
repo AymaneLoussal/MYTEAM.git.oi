@@ -69,3 +69,4 @@ class ProfileController extends Controller
     }
 }
 
+// ProfileController Docblock placeholder 
