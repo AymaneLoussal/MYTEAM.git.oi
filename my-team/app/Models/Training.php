@@ -36,3 +36,4 @@ class Training extends Model
     }
 }
 
+// Training Model Docblock placeholder 
