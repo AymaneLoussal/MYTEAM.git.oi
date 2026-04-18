@@ -200,3 +200,4 @@ class TrainingController extends Controller
         return $team->players()->where('user_id', $user->id)->exists();
     }
 }
+// TrainingController Docblock placeholder 
