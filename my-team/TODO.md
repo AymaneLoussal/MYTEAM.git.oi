@@ -27,3 +27,4 @@
 
 **Progress: 100% (Core Features Complete)** 🎉
 
+- [x] Tests have been generated 
