@@ -122,3 +122,4 @@ class ChatController extends Controller
     }
 }
 
+// ChatController Docblock placeholder 
