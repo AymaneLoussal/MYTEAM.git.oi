@@ -68,3 +68,4 @@ protected $fillable = ['name', 'email', 'password', 'avatar', 'notes'];
         return $this->hasMany(Invitation::class);
     }
 }
+// User Model Docblock placeholder 
