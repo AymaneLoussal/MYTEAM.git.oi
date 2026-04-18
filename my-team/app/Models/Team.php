@@ -51,3 +51,4 @@ class Team extends Model
     }
 }
 // Team Model Docblock placeholder 
+// Soft deletes stub added 
