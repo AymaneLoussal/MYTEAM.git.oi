@@ -231,3 +231,4 @@ return [
     'serialization' => 'json',
 
 ];
+// Session timeout refactored 
