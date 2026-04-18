@@ -87,3 +87,4 @@ class AuthController extends Controller
     }
 }
 // AuthController Docblock placeholder 
+// Validation rules extracted 
