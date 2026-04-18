@@ -86,3 +86,4 @@ class AuthController extends Controller
         return redirect('/');
     }
 }
+// AuthController Docblock placeholder 
