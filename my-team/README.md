@@ -66,3 +66,4 @@ Admin: `admin@team.com` / `adminpass`
 
 
 
+- Appended documentation for Roles 
