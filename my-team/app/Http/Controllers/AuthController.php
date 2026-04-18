@@ -88,3 +88,4 @@ class AuthController extends Controller
 }
 // AuthController Docblock placeholder 
 // Validation rules extracted 
+// Validation rules extracted for login 
