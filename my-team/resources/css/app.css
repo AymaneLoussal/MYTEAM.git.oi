@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@config '../../tailwind.config.cjs';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -14,3 +15,6 @@
 /* UI loading state added */ 
 /* UI rounded cards standard */ 
 /* UI table hover row added */ 
+
+:focus-visible { outline: 2px solid #3b6934; outline-offset: 3px; }
+input, textarea, select { border: 1px solid currentColor; }

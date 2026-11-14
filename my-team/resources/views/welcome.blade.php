@@ -4,74 +4,11 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "background": "#121413",
-              "tertiary-fixed": "#ffd9e4",
-              "on-tertiary-fixed": "#3b0520",
-              "tertiary": "#ffb0cc",
-              "surface-container-high": "#282a29",
-              "on-tertiary": "#561b35",
-              "on-secondary": "#24342b",
-              "on-error": "#690005",
-              "surface-variant": "#333534",
-              "surface-container-lowest": "#0d0f0e",
-              "inverse-on-surface": "#2f3130",
-              "on-primary-fixed-variant": "#23501e",
-              "on-tertiary-container": "#ffaac8",
-              "surface-dim": "#121413",
-              "on-primary": "#0a3909",
-              "on-background": "#e2e3e0",
-              "on-primary-container": "#9dd090",
-              "on-primary-fixed": "#002201",
-              "surface": "#121413",
-              "on-secondary-container": "#abbdb0",
-              "on-surface-variant": "#c2c9bb",
-              "on-secondary-fixed-variant": "#3b4a40",
-              "error-container": "#93000a",
-              "inverse-surface": "#e2e3e0",
-              "secondary": "#b9cbbe",
-              "tertiary-container": "#7c3a55",
-              "secondary-fixed-dim": "#b9cbbe",
-              "on-error-container": "#ffdad6",
-              "secondary-fixed": "#d5e7d9",
-              "primary-fixed-dim": "#a1d494",
-              "surface-tint": "#a1d494",
-              "primary": "#a1d494",
-              "outline": "#8c9387",
-              "surface-bright": "#383a38",
-              "secondary-container": "#3d4d43",
-              "on-secondary-fixed": "#101f16",
-              "outline-variant": "#42493e",
-              "surface-container": "#1e201f",
-              "error": "#ffb4ab",
-              "primary-container": "#2d5a27",
-              "tertiary-fixed-dim": "#ffb0cc",
-              "inverse-primary": "#3b6934",
-              "surface-container-highest": "#333534",
-              "on-surface": "#e2e3e0",
-              "on-tertiary-fixed-variant": "#71314c",
-              "primary-fixed": "#bcf0ae",
-              "surface-container-low": "#1a1c1b"
-            },
-            fontFamily: {
-              "headline": ["Manrope"],
-              "body": ["Inter"],
-              "label": ["Inter"]
-            },
-            borderRadius: {"DEFAULT": "0.75rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-          },
-        },
-      }
-    </script>
+
+
+
+@include('components.assets')
+
 <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;

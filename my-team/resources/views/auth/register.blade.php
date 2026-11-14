@@ -4,73 +4,10 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>FTMBALL | Join Tactical Staff</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "on-secondary-fixed": "#121b31",
-                        "surface-container-high": "#282a29",
-                        "secondary-container": "#3d465f",
-                        "surface-container-lowest": "#0d0f0e",
-                        "inverse-surface": "#e2e3e0",
-                        "tertiary": "#c5c7c5",
-                        "surface-variant": "#333534",
-                        "on-tertiary": "#2e3130",
-                        "on-primary-fixed-variant": "#1e5031",
-                        "on-primary": "#01391c",
-                        "secondary-fixed-dim": "#bdc6e4",
-                        "on-tertiary-fixed-variant": "#444746",
-                        "on-tertiary-fixed": "#191c1b",
-                        "surface-bright": "#383a38",
-                        "outline-variant": "#424842",
-                        "primary-container": "#003016",
-                        "on-error": "#690005",
-                        "on-surface-variant": "#c2c8c0",
-                        "on-error-container": "#ffdad6",
-                        "error": "#ffb4ab",
-                        "primary": "#9ed3aa",
-                        "on-secondary-fixed-variant": "#3d465f",
-                        "tertiary-container": "#262928",
-                        "surface-container-low": "#1a1c1b",
-                        "surface-container-highest": "#333534",
-                        "error-container": "#93000a",
-                        "tertiary-fixed-dim": "#c5c7c5",
-                        "surface": "#121413",
-                        "on-secondary-container": "#acb4d2",
-                        "inverse-primary": "#376847",
-                        "on-primary-fixed": "#00210e",
-                        "on-secondary": "#273047",
-                        "primary-fixed-dim": "#9ed3aa",
-                        "secondary-fixed": "#dae2ff",
-                        "on-primary-container": "#689b75",
-                        "surface-container": "#1e201f",
-                        "on-surface": "#e2e3e0",
-                        "on-tertiary-container": "#8d908f",
-                        "surface-dim": "#121413",
-                        "surface-tint": "#9ed3aa",
-                        "primary-fixed": "#b9efc5",
-                        "on-background": "#e2e3e0",
-                        "secondary": "#bdc6e4",
-                        "inverse-on-surface": "#2f312f",
-                        "outline": "#8c928b",
-                        "background": "#121413",
-                        "tertiary-fixed": "#e1e3e1"
-                    },
-                    fontFamily: {
-                        "headline": ["Manrope"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
-                    },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-                },
-            },
-        }
-    </script>
+@include('components.assets')
+
+
+
 <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
