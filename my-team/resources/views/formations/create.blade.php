@@ -1,116 +1,96 @@
-@extends('components.layouts.app')
-
-@section('title', $team->name . ' - New Formation')
-
-<x-header title="New Tactical Formation" />
-
-<div class="max-w-4xl mx-auto space-y-6">
-    <div class="flex items-center gap-4">
-        <a href="{{ route('formations.team', $team) }}" class="text-slate-500 hover:text-slate-700">
-            ← Back to formations
-        </a>
-        <h1 class="text-3xl font-black tracking-tight flex-1">{{ $team->name }}</h1>
-    </div>
-
-    <form method="POST" action="{{ route('formations.store', $team) }}" class="space-y-6">
+<x-layouts.app :title="isset($formation) ? 'Edit formation' : 'Create formation'">
+    <a href="{{ route('formations.team', $team) }}">Back to formations</a>
+    <h1 class="text-3xl font-bold my-6">{{ isset($formation) ? 'Edit formation' : 'New formation' }} — {{ $team->name }}</h1>
+    @include('components.feedback')
+    <form method="POST" action="{{ isset($formation) ? route('formations.update', $formation) : route('formations.store', $team) }}" id="formation-form">
         @csrf
-        <div>
-            <label class="block text-sm font-bold mb-2">Formation Title</label>
-            <input name="title" type="text" class="w-full rounded-xl border-slate-200 p-4 text-lg" placeholder="4-3-3 Attack" required>
+        @isset($formation) @method('PATCH') @endisset
+        <label for="formation-title" class="block font-bold">Formation title</label>
+        <input id="formation-title" name="title" required maxlength="255" value="{{ old('title', $formation->title ?? '') }}" class="w-full border rounded-lg p-3 mb-6">
+        <p class="mb-4">Drag players onto the pitch, or use “Add player” and edit coordinates below. Maximum 11 players.</p>
+        <div id="pitch" class="relative h-[400px] rounded-xl border-4 border-white bg-green-700 mb-4" aria-label="Formation pitch">
+            <div class="absolute inset-6 border-2 border-white pointer-events-none"></div>
         </div>
-
-        <div>
-            <label class="block text-sm font-bold mb-4">Pitch Setup (Drag players to positions)</label>
-            <div id="pitch" class="relative w-full h-[500px] bg-gradient-to-b from-green-400 to-green-600 rounded-2xl border-4 border-white shadow-2xl overflow-hidden">
-                <!-- Pitch markings SVG -->
-                <svg viewBox="0 0 600 400" class="w-full h-full">
-                    <rect fill="none" stroke="white" stroke-width="4" x="50" y="25" width="500" height="350" rx="10"/>
-                    <!-- Center circle -->
-                    <circle cx="300" cy="200" r="40" fill="none" stroke="white" stroke-width="3"/>
-                    <!-- Goals -->
-                    <rect fill="#ff4444" x="10" y="125" width="40" height="150" rx="5"/>
-                    <rect fill="#4488ff" x="550" y="125" width="40" height="150" rx="5"/>
-                </svg>
-            </div>
-            <p class="mt-4 text-sm text-slate-600">Drag players below to the pitch. Save positions.</p>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-48 overflow-y-auto p-4 border rounded-xl bg-slate-50">
+        <div class="flex flex-wrap gap-2 mb-6">
             @foreach($players as $player)
-                <div class="group formation-player bg-white rounded-xl p-4 border shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing transition-all" draggable="true" data-player-id="{{ $player->id }}" data-name="{{ $player->name }}" data-role="">
-                    <img src="{{ $player->avatar_url }}" alt="{{ $player->name }}" class="w-12 h-12 rounded-full mx-auto mb-2 object-cover">
-                    <div class="text-center">
-                        <div class="font-bold text-sm">{{ $player->name }}</div>
-                        <div class="text-xs text-slate-500">Select role</div>
-                    </div>
-                </div>
+                <button type="button" class="formation-player rounded-lg border p-3 bg-white" draggable="true" data-player-id="{{ $player->id }}">Add {{ $player->name }}</button>
             @endforeach
         </div>
-
-        <input type="hidden" name="positions" id="positions-input" value="[]">
-        <button type="submit" class="w-full rounded-xl bg-[#1d4d2f] px-8 py-4 text-xl font-bold text-white hover:brightness-110">Save Formation</button>
+        <div id="position-controls" class="space-y-3"></div>
+        <p id="formation-error" role="alert" class="text-red-700"></p>
+        <input type="hidden" name="positions" id="positions-input">
+        <button class="mt-6 rounded-lg bg-emerald-800 text-white px-8 py-3">Save formation</button>
     </form>
-</div>
-
-<script>
-const players = document.querySelectorAll('.formation-player');
-const pitch = document.getElementById('pitch');
-let draggedPlayer = null;
-let positions = [];
-
-players.forEach(player => {
-    player.addEventListener('dragstart', (e) => {
-        draggedPlayer = player;
-        e.dataTransfer.effectAllowed = 'move';
-    });
-});
-
-pitch.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-});
-
-pitch.addEventListener('drop', (e) => {
-    e.preventDefault();
-    if (draggedPlayer) {
-        const rect = pitch.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
-        const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
-        
-        const pos = {
-            player_id: draggedPlayer.dataset.playerId,
-            x: parseFloat(x),
-            y: parseFloat(y),
-            role: 'starter' // TODO: select
-        };
-        
-        // Update or add
-        const index = positions.findIndex(p => p.player_id == pos.player_id);
-        if (index > -1) {
-            positions[index] = pos;
-        } else {
-            positions.push(pos);
+    <script>
+        const roster = {{ Illuminate\Support\Js::from($players->map(fn($p) => ['id'=>$p->id,'name'=>$p->name])->values()) }};
+        const initial = {{ Illuminate\Support\Js::from(old('positions', $formation->positions ?? [])) }};
+        let positions = typeof initial === 'string' ? (() => {try {return JSON.parse(initial);} catch {return [];}})() : initial;
+        if (!Array.isArray(positions)) positions = [];
+        const pitch = document.getElementById('pitch');
+        const controls = document.getElementById('position-controls');
+        let draggedId = null;
+        function render() {
+            controls.replaceChildren();
+            pitch.querySelectorAll('.marker').forEach(node => node.remove());
+            positions.forEach((position, index) => {
+                const player = roster.find(player => Number(player.id) === Number(position.player_id));
+                const name = player ? player.name : 'Former player (remove before saving)';
+                const marker = document.createElement('span');
+                marker.className = 'marker absolute bg-white text-slate-900 rounded p-1 text-xs';
+                marker.style.left = Math.max(0, Math.min(100, Number(position.x) || 0)) + '%';
+                marker.style.top = Math.max(0, Math.min(100, Number(position.y) || 0)) + '%';
+                marker.textContent = name.slice(0, 8);
+                pitch.append(marker);
+                const row = document.createElement('div');
+                row.className = 'flex flex-wrap items-center gap-3 border rounded-lg p-3';
+                const title = document.createElement('strong');
+                title.textContent = name;
+                row.append(title);
+                ['x','y'].forEach(axis => {
+                    const label = document.createElement('label');
+                    label.textContent = axis.toUpperCase() + ' % ';
+                    const input = document.createElement('input');
+                    input.type = 'number'; input.min = 0; input.max = 100; input.step = 0.1; input.required = true;
+                    input.value = position[axis]; input.className = 'w-20 border rounded p-2';
+                    input.addEventListener('change', () => {position[axis] = Number(input.value); render();});
+                    label.append(input); row.append(label);
+                });
+                const label = document.createElement('label'); label.textContent = 'Role ';
+                const select = document.createElement('select');
+                ['GK','DEF','MID','FWD','starter','substitute'].forEach(role => {
+                    const option = document.createElement('option'); option.value = role; option.textContent = role; select.append(option);
+                });
+                select.value = position.role || 'MID';
+                select.addEventListener('change', () => {position.role = select.value; sync();});
+                label.append(select); row.append(label);
+                const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove';
+                remove.addEventListener('click', () => {positions.splice(index, 1); render();});
+                row.append(remove); controls.append(row);
+            });
+            sync();
         }
-        
-        document.getElementById('positions-input').value = JSON.stringify(positions);
-        
-        // Visual feedback: clone to pitch
-        let marker = document.getElementById(`marker-${pos.player_id}`);
-        if (marker) marker.remove();
-        marker = document.createElement('div');
-        marker.id = `marker-${pos.player_id}`;
-        marker.className = 'absolute text-xs bg-white rounded-full p-1 shadow-lg flex items-center gap-1 cursor-pointer';
-        marker.style.left = x + '%';
-        marker.style.top = y + '%';
-        marker.innerHTML = `<span>${draggedPlayer.dataset.name.slice(0,8)}</span>`;
-        pitch.appendChild(marker);
-        
-        draggedPlayer = null;
-    }
-});
-</script>
-
-<style>
-#pitch svg { pointer-events: none; }
-</style>
-
+        function sync() {document.getElementById('positions-input').value = JSON.stringify(positions);}
+        function add(id, x=50, y=50) {
+            const existing = positions.find(position => Number(position.player_id) === Number(id));
+            if (existing) {existing.x=x; existing.y=y;}
+            else if (positions.length < 11) positions.push({player_id:Number(id),x,y,role:'MID'});
+            else {document.getElementById('formation-error').textContent='Maximum 11 players.'; return;}
+            document.getElementById('formation-error').textContent=''; render();
+        }
+        document.querySelectorAll('.formation-player').forEach(button => {
+            button.addEventListener('click', () => add(button.dataset.playerId));
+            button.addEventListener('dragstart', event => {
+                draggedId=button.dataset.playerId; event.dataTransfer.setData('text/plain', draggedId);
+            });
+        });
+        pitch.addEventListener('dragover', event => event.preventDefault());
+        pitch.addEventListener('drop', event => {
+            event.preventDefault();
+            if (!draggedId) return;
+            const rect=pitch.getBoundingClientRect();
+            add(draggedId, Math.round((event.clientX-rect.left)/rect.width*1000)/10, Math.round((event.clientY-rect.top)/rect.height*1000)/10);
+            draggedId=null;
+        });
+        render();
+    </script>
+</x-layouts.app>

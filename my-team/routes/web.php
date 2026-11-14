@@ -58,6 +58,8 @@ Route::middleware('auth.custom')->group(function () {
     Route::get('/teams/{team}/formations/create', [FormationController::class, 'create'])->name('formations.create');
     Route::post('/teams/{team}/formations', [FormationController::class, 'store'])->name('formations.store');
     Route::get('/formations/{formation}', [FormationController::class, 'show'])->name('formations.show');
+    Route::get('/formations/{formation}/edit', [FormationController::class, 'edit'])->name('formations.edit');
+    Route::delete('/formations/{formation}', [FormationController::class, 'destroy'])->name('formations.destroy');
     Route::patch('/formations/{formation}', [FormationController::class, 'update'])->name('formations.update');
 
     Route::get('/matches', [MatchController::class, 'index'])->name('matches.index');

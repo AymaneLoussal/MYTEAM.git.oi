@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta content="width=device=device-width, initial-scale=1.0" name="viewport" />
     <title>Profile | Tactical Sanctum</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Inter:wght@100..900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    @include('components.assets')
+
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -97,10 +97,15 @@
                         @enderror
                     </div>
 
+                    <div>
+                        <label for="current_password" class="block text-sm font-bold mb-2">Current password (required to change email or password)</label>
+                        <input type="password" name="current_password" id="current_password" autocomplete="current-password" class="w-full rounded-lg p-3 bg-surface-container">
+                        @error('current_password')<p role="alert" class="text-error">{{ $message }}</p>@enderror
+                    </div>
                     <!-- Password Section -->
                     <div class="border-t border-outline-variant/20 pt-6 mt-6">
                         <h3 class="text-lg font-bold mb-4">Change Password (Optional)</h3>
-                        
+
                         <div class="space-y-4">
                             <div>
                                 <label for="password" class="block text-sm font-bold mb-2">New Password</label>

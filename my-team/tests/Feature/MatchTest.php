@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\GameMatch;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,15 +12,14 @@ class MatchTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function coach_can_create_match()
+    public function test_coach_can_create_match()
     {
         $coach = User::factory()->create();
         $session = session(['user_id' => $coach->id]);
         $team = Team::factory()->create(['coach_id' => $coach->id]);
 
         $response = $this->post(route('matches.store', $team), [
-            'starts_at' => now()->addDays(1),
+            'starts_at' => now()->addDay()->format('Y-m-d\\TH:i'),
             'location' => 'Stadium',
             'opponent' => 'Rival FC',
         ]);
@@ -31,14 +31,13 @@ class MatchTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function coach_can_set_lineup()
+    public function test_coach_can_set_lineup()
     {
         $coach = User::factory()->create();
         $team = Team::factory()->create(['coach_id' => $coach->id]);
         $player = User::factory()->create();
         $team->players()->attach($player);
-        $match = \App\Models\Match::factory()->create(['team_id' => $team->id]);
+        $match = GameMatch::create(['team_id' => $team->id, 'created_by' => $coach->id, 'starts_at' => now()->addDay()]);
         session(['user_id' => $coach->id]);
 
         $response = $this->patch(route('matches.lineup.update', $match), [
@@ -55,8 +54,7 @@ class MatchTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function non_coach_cannot_create_match()
+    public function test_non_coach_cannot_create_match()
     {
         $coach = User::factory()->create();
         $team = Team::factory()->create(['coach_id' => $coach->id]);
@@ -64,10 +62,9 @@ class MatchTest extends TestCase
         session(['user_id' => $player->id]);
 
         $response = $this->post(route('matches.store', $team), [
-            'starts_at' => now()->addDays(1),
+            'starts_at' => now()->addDay()->format('Y-m-d\\TH:i'),
         ]);
 
         $response->assertStatus(403);
     }
 }
-

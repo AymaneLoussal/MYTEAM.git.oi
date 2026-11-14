@@ -1,8 +1,4 @@
-@extends('components.layouts.app')
-
-@section('title', $formation->title)
-
-<x-header title="Formation: {{ $formation->title }}" />
+<x-layouts.app title="Formations">
 
 <div class="space-y-6">
     <div class="flex items-center justify-between">
@@ -26,7 +22,7 @@
             @endphp
             <div class="absolute text-xs bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border flex items-center gap-1 font-bold" 
                  style="left: {{ $pos['x'] }}%; top: {{ $pos['y'] }}%;">
-                {{ $player?->name?->slice(0,6) ?? 'Unknown' }}
+                {{ \Illuminate\Support\Str::limit($player?->name ?? 'Unknown', 6) ?? 'Unknown' }}
                 <span class="text-xs bg-slate-200 px-1 rounded">{{ $pos['role'] ?? 'N/A' }}</span>
             </div>
         @endforeach
@@ -34,7 +30,7 @@
 
     @if($isCoach)
         <div class="flex gap-3">
-            <a href="#" onclick="editThis({{ $formation->id }})" class="flex-1 rounded-xl bg-slate-900 px-6 py-3 text-center font-bold text-white hover:brightness-110">Edit</a>
+            <a href="{{ route('formations.edit', $formation) }}" class="flex-1 rounded-xl bg-slate-900 px-6 py-3 text-center font-bold text-white hover:brightness-110">Edit</a>
             <form method="POST" action="{{ route('formations.destroy', $formation) }}" class="flex-1" onsubmit="return confirm('Delete?')">
                 @csrf @method('DELETE')
                 <button class="w-full rounded-xl border border-red-200 bg-red-50 px-6 py-3 font-bold text-red-700 hover:bg-red-100">Delete</button>
@@ -42,11 +38,4 @@
         </div>
     @endif
 </div>
-
-<script>
-function editThis(id) {
-    // Redirect or modal
-    window.location = `/teams/{{ $formation->team_id }}/formations/create?edit=${id}`;
-}
-</script>
-
+</x-layouts.app>

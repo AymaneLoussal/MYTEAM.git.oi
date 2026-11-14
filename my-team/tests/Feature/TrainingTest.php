@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Team;
+use App\Models\Training;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -11,8 +12,7 @@ class TrainingTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function coach_can_create_training()
+    public function test_coach_can_create_training()
     {
         $coach = User::factory()->create();
         $team = Team::factory()->create(['coach_id' => $coach->id]);
@@ -20,7 +20,7 @@ class TrainingTest extends TestCase
 
         $response = $this->post(route('trainings.store', $team), [
             'title' => 'Aerobic Fitness',
-            'starts_at' => now()->addDays(1),
+            'starts_at' => now()->addDay()->format('Y-m-d\\TH:i'),
             'location' => 'Field 1',
         ]);
 
@@ -31,14 +31,13 @@ class TrainingTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function player_can_view_team_trainings()
+    public function test_player_can_view_team_trainings()
     {
         $coach = User::factory()->create();
         $team = Team::factory()->create(['coach_id' => $coach->id]);
         $player = User::factory()->create();
         $team->players()->attach($player);
-        \App\Models\Training::factory()->create(['team_id' => $team->id]);
+        Training::create(['team_id' => $team->id, 'created_by' => $coach->id, 'title' => 'Training', 'starts_at' => now()->addDay()]);
         session(['user_id' => $player->id]);
 
         $response = $this->get(route('trainings.team', $team));
@@ -46,4 +45,3 @@ class TrainingTest extends TestCase
         $response->assertStatus(200);
     }
 }
-

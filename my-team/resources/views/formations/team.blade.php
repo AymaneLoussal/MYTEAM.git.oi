@@ -1,8 +1,4 @@
-@extends('components.layouts.app')
-
-@section('title', $team->name . ' - Formations')
-
-<x-header title="Formations" />
+<x-layouts.app title="Formations">
 
 <div class="space-y-6">
     <div class="flex items-center justify-between">
@@ -28,7 +24,7 @@
                     <div class="flex gap-2">
                         <a href="{{ route('formations.show', $formation) }}" class="flex-1 rounded-xl bg-slate-900 px-4 py-2 text-center text-sm font-bold text-white hover:brightness-110">View</a>
                         @if($isCoach)
-                            <a href="#" onclick="editFormation({{ $formation->id }})" class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold text-slate-800 hover:bg-slate-50">Edit</a>
+                            <a href="{{ route('formations.edit', $formation) }}" class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-bold text-slate-800 hover:bg-slate-50">Edit</a>
                         @endif
                     </div>
                 </div>
@@ -38,11 +34,4 @@
 
     <a class="rounded-xl border border-slate-200 bg-white px-6 py-3 font-bold text-slate-800 hover:bg-slate-50 inline-block" href="{{ route('dashboard') }}">← Back</a>
 </div>
-
-<script>
-function editFormation(id) {
-    // Modal or redirect for edit - TBD
-    alert('Edit coming soon!');
-}
-</script>
-
+</x-layouts.app>

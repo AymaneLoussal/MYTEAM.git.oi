@@ -6,6 +6,7 @@ use App\Models\Formation;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class FormationController extends Controller
 {
@@ -27,7 +28,7 @@ class FormationController extends Controller
         $playerTeams = $user->playerTeams()->with('formations')->latest()->get();
 
         // Get all formations from teams the user has access to
-        $formations = Formation::whereIn('team_id', 
+        $formations = Formation::whereIn('team_id',
             $coachTeams->pluck('id')->merge($playerTeams->pluck('id'))
         )->latest()->get();
 
@@ -89,14 +90,7 @@ class FormationController extends Controller
             abort(403);
         }
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'positions' => 'required|array|min:1',
-            'positions.*.player_id' => 'exists:users,id',
-            'positions.*.x' => 'numeric|min:0|max:100',
-            'positions.*.y' => 'numeric|min:0|max:100',
-            'positions.*.role' => 'string|max:20', // GK, DEF, MID, FWD
-        ]);
+        $validated = $this->validatePositions($request, $team);
 
         Formation::create([
             'team_id' => $team->id,
@@ -144,21 +138,54 @@ class FormationController extends Controller
             abort(403);
         }
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'positions' => 'required|array|min:1',
-            'positions.*.player_id' => 'exists:users,id',
-            'positions.*.x' => 'numeric|min:0|max:100',
-            'positions.*.y' => 'numeric|min:0|max:100',
-            'positions.*.role' => 'string|max:20',
-        ]);
+        $validated = $this->validatePositions($request, $formation->team);
 
         $formation->update([
             'title' => $validated['title'],
             'positions' => $validated['positions'],
         ]);
 
-        return response()->json(['message' => 'Formation updated']);
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Formation updated'])
+            : redirect()->route('formations.show', $formation)->with('status', 'Formation updated.');
+    }
+
+    private function validatePositions(Request $request, Team $team): array
+    {
+        if (is_string($request->input('positions'))) {
+            $request->merge(['positions' => json_decode($request->input('positions'), true)]);
+        }
+
+        return $request->validate([
+            'title' => 'required|string|max:255',
+            'positions' => 'required|array|min:1|max:11',
+            'positions.*' => 'required|array:player_id,x,y,role',
+            'positions.*.player_id' => ['required', 'integer', 'distinct', Rule::exists('team_user', 'user_id')->where('team_id', $team->id)],
+            'positions.*.x' => 'required|numeric|min:0|max:100',
+            'positions.*.y' => 'required|numeric|min:0|max:100',
+            'positions.*.role' => 'required|in:GK,DEF,MID,FWD,starter,substitute',
+        ]);
+    }
+
+    public function edit(Formation $formation)
+    {
+        $this->authorize('update', $formation);
+
+        return view('formations.create', [
+            'team' => $formation->team, 'formation' => $formation,
+            'players' => $formation->team->players()->orderBy('name')->get(),
+        ]);
+    }
+
+    public function destroy(Request $request, Formation $formation)
+    {
+        $this->authorize('delete', $formation);
+        $team = $formation->team;
+        $formation->delete();
+
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Formation deleted'])
+            : redirect()->route('formations.team', $team)->with('status', 'Formation deleted.');
     }
 
     private function canViewTeam(User $user, Team $team): bool
@@ -167,4 +194,4 @@ class FormationController extends Controller
     }
 }
 
-// FormationController Docblock placeholder 
+// FormationController Docblock placeholder
