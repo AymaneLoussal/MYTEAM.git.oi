@@ -80,9 +80,9 @@
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
         },
-        "disable-tls": true
+        "disable-tls": false,
+        "secure-http": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
-// Core updated description 
