@@ -6,78 +6,10 @@
     <meta charset="utf-8" />
     <meta content="width=device=device-width, initial-scale=1.0" name="viewport" />
     <title>Tactical Sanctum | Dashboard</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "secondary-container": "#3d4d43",
-                        "secondary": "#b9cbbe",
-                        "on-error": "#690005",
-                        "inverse-on-surface": "#2f3130",
-                        "surface": "#121413",
-                        "on-tertiary-fixed-variant": "#71314c",
-                        "surface-container-low": "#1a1c1b",
-                        "surface-tint": "#a1d494",
-                        "surface-bright": "#383a38",
-                        "surface-container-lowest": "#0d0f0e",
-                        "on-primary-fixed": "#002201",
-                        "background": "#121413",
-                        "error-container": "#93000a",
-                        "tertiary-container": "#7c3a55",
-                        "surface-variant": "#333534",
-                        "primary": "#a1d494",
-                        "on-secondary-fixed": "#101f16",
-                        "tertiary": "#ffb0cc",
-                        "surface-container": "#1e201f",
-                        "error": "#ffb4ab",
-                        "inverse-surface": "#e2e3e0",
-                        "on-secondary-fixed-variant": "#3b4a40",
-                        "on-background": "#e2e3e0",
-                        "tertiary-fixed-dim": "#ffb0cc",
-                        "outline": "#8c9387",
-                        "on-tertiary-container": "#ffaac8",
-                        "on-secondary": "#24342b",
-                        "primary-container": "#2d5a27",
-                        "on-primary-container": "#9dd090",
-                        "on-tertiary": "#561b35",
-                        "secondary-fixed": "#d5e7d9",
-                        "surface-container-highest": "#333534",
-                        "on-secondary-container": "#abbdb0",
-                        "surface-container-high": "#282a29",
-                        "on-primary-fixed-variant": "#23501e",
-                        "on-error-container": "#ffdad6",
-                        "on-surface-variant": "#c2c9bb",
-                        "primary-fixed": "#bcf0ae",
-                        "surface-dim": "#121413",
-                        "primary-fixed-dim": "#a1d494",
-                        "on-tertiary-fixed": "#3b0520",
-                        "secondary-fixed-dim": "#b9cbbe",
-                        "on-surface": "#e2e3e0",
-                        "outline-variant": "#42493e",
-                        "tertiary-fixed": "#ffd9e4",
-                        "inverse-primary": "#3b6934",
-                        "on-primary": "#0a3909"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.75rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "fontFamily": {
-                        "headline": ["Manrope"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
-                    }
-                },
-            },
-        }
-    </script>
+    @include('components.assets')
+
+
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -241,7 +173,7 @@
                                     <p class="font-bold text-sm">{{ $inv->team->name }}</p>
                                     <p class="text-xs text-secondary">{{ $inv->coach->name ?? 'Coach' }}</p>
                                 </div>
-                                <a class="ml-auto text-primary text-xs font-bold" href="{{ route('invitations.show', $inv->token) }}">Review</a>
+                                <span class="ml-auto text-primary text-xs font-bold">Use the invitation link in your email</span>
                             </div>
                             @empty
                             <p class="text-xs text-secondary italic">No invites</p>

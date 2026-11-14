@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -19,10 +20,13 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        if (is_string($request->input('email'))) {
+            $request->merge(['email' => strtolower(trim((string) $request->email))]);
+        }
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed' // assumes password_confirmation
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed', // assumes password_confirmation
         ]);
 
         $user = User::create([
@@ -46,12 +50,12 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::whereRaw('LOWER(email) = ?', [strtolower(trim((string) $request->email))])->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             if ($this->wantsJson($request)) {
                 return response()->json(['message' => 'Invalid credentials'], 401);
             }
@@ -68,6 +72,10 @@ class AuthController extends Controller
             return response()->json(['message' => 'Login successful', 'user' => $user->only('id', 'name', 'email')]);
         }
 
+        if ($token = session()->pull('invitation_token')) {
+            return redirect()->route('invitations.show', $token);
+        }
+
         return redirect()->route('dashboard');
     }
 
@@ -77,7 +85,9 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        session()->forget('user_id');
+        Auth::forgetUser();
+        session()->invalidate();
+        session()->regenerateToken();
 
         if ($this->wantsJson($request)) {
             return response()->json(['message' => 'Logout successful']);
@@ -86,6 +96,6 @@ class AuthController extends Controller
         return redirect('/');
     }
 }
-// AuthController Docblock placeholder 
-// Validation rules extracted 
-// Validation rules extracted for login 
+// AuthController Docblock placeholder
+// Validation rules extracted
+// Validation rules extracted for login

@@ -1,108 +1,82 @@
 <x-layouts.app title="Chat">
-    <div class="flex h-[calc(100vh-120px)] overflow-hidden bg-background">
-        <!-- Sidebar: Participants -->
-        <div class="w-64 border-r border-outline-variant/10 bg-surface-container-low p-4 hidden md:block">
-            <h3 class="text-xs font-bold uppercase tracking-widest text-primary mb-4">Participants</h3>
-            <div class="space-y-2">
-                @foreach($conversation->participants as $p)
-                    <div class="flex items-center gap-2 p-2 rounded-lg bg-surface-container-highest">
-                        <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                        <span class="text-sm font-medium">{{ $p->name }}</span>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-
-        <!-- Chat Area -->
-        <div class="flex-1 flex flex-col">
-            <!-- Header -->
-            <div class="p-4 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low">
-                <div class="flex items-center gap-3">
-                    <span class="font-bold text-lg">{{ $conversation->subject }}</span>
-                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-primary/20 text-primary uppercase font-bold">
-                        {{ str_replace('_', ' ', $conversation->type) }}
-                    </span>
-                </div>
-                <a href="{{ route('chat.index') }}" class="text-sm text-slate-500 hover:text-primary">Back to list</a>
-            </div>
-
-            <!-- Messages -->
-            <div id="chat-window" class="flex-1 overflow-y-auto p-6 space-y-4 bg-surface-container-lowest">
-                @foreach($messages as $msg)
-                    <div class="flex {{ $msg->sender_id === $user->id ? 'justify-end' : 'justify-start' }}">
-                        <div class="max-w-md p-4 rounded-2xl {{ $msg->sender_id === $user->id ? 'bg-primary text-on-primary rounded-tr-none' : 'bg-surface-container-high text-on-surface rounded-tl-none' }}">
-                            <p class="text-xs font-bold opacity-70 mb-1">{{ $msg->sender->name }}</p>
-                            <p class="text-sm">{{ $msg->message }}</p>
-                            <p class="text-[10px] text-right opacity-50 mt-1">{{ $msg->created_at->format('H:i') }}</p>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <!-- Input Area -->
-            <div class="p-4 bg-surface-container-low border-t border-outline-variant/10">
-                <form id="chat-form" class="flex gap-4">
-                    @csrf
-                    <input type="hidden" name="conversation_id" value="{{ $conversation->id }}">
-                    <input type="text" name="message" id="message-input" class="flex-1 rounded-xl border-slate-200 bg-surface-container-highest text-sm" placeholder="Type your message...">
-                    <button type="submit" class="bg-primary text-on-primary px-6 py-2 rounded-xl font-bold text-sm hover:brightness-110 transition-all">
-                        Send
-                    </button>
-                </form>
-            </div>
-        </div>
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">{{ $conversation->subject }}</h1>
+        <a href="{{ route('chat.index') }}">Back to conversations</a>
     </div>
-
+    <p class="mb-4 text-sm">Participants: {{ $conversation->participants->pluck('name')->join(', ') }}</p>
+    {{ $messages->links() }}
+    <div id="chat-window" class="space-y-4 my-6 max-h-[60vh] overflow-y-auto" aria-live="polite">
+        @foreach($messages->getCollection()->reverse() as $msg)
+            <article data-id="{{ $msg->id }}" class="rounded-xl border p-4 bg-white">
+                <p class="font-bold">{{ $msg->sender->name }}</p>
+                <p class="whitespace-pre-wrap break-words">{{ $msg->message }}</p>
+                <time class="text-xs text-slate-500">{{ $msg->created_at->format('H:i') }}</time>
+            </article>
+        @endforeach
+    </div>
+    <p id="chat-error" role="alert" class="text-red-700"></p>
+    @can('send', $conversation)
+        <form id="chat-form" class="flex gap-4">
+            @csrf
+            <input type="hidden" name="conversation_id" value="{{ $conversation->id }}">
+            <label for="message-input" class="sr-only">Message</label>
+            <input type="text" name="message" id="message-input" maxlength="5000" required class="flex-1 rounded-xl border p-3" placeholder="Type your message">
+            <button class="bg-emerald-800 text-white px-6 rounded-xl">Send</button>
+        </form>
+    @endcan
     <script>
-        const form = document.getElementById('chat-form');
         const chatWindow = document.getElementById('chat-window');
-
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            const formData = new FormData(form);
-            const response = await fetch("{{ route('chat.messages') }}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                },
-                body: formData
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'flex justify-end';
-                msgDiv.innerHTML = `
-                    <div class="max-w-md p-4 rounded-2xl bg-primary text-on-primary rounded-tr-none">
-                        <p class="text-xs font-bold opacity-70 mb-1">{{ $user->name }}</p>
-                        <p class="text-sm">${data.message}</p>
-                        <p class="text-[10px] text-right opacity-50 mt-1">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                    </div>
-                `;
-                chatWindow.appendChild(msgDiv);
-                chatWindow.scrollTop = chatWindow.scrollHeight;
-                form.reset();
-            }
-        };
-
-        // Simple Polling for "Real-time" feel
-        setInterval(async () => {
+        const form = document.getElementById('chat-form');
+        const error = document.getElementById('chat-error');
+        let lastId = {{ $messages->getCollection()->max('id') ?? 0 }};
+        const newestPage = {{ $messages->currentPage() === 1 ? 'true' : 'false' }};
+        function appendMessage(data) {
+            if (chatWindow.querySelector('[data-id="' + Number(data.id) + '"]')) return;
+            const article = document.createElement('article');
+            article.dataset.id = data.id;
+            article.className = 'rounded-xl border p-4 bg-white';
+            const author = document.createElement('p');
+            author.className = 'font-bold';
+            author.textContent = data.sender.name;
+            const text = document.createElement('p');
+            text.className = 'whitespace-pre-wrap break-words';
+            text.textContent = data.message;
+            article.append(author, text);
+            chatWindow.appendChild(article);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+        if (form) form.addEventListener('submit', async event => {
+            event.preventDefault();
+            const button = form.querySelector('button');
+            button.disabled = true;
             try {
-                const response = await fetch("{{ route('chat.show', $conversation) }}");
-                if (response.ok) {
-                    const html = await response.text();
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newMessages = doc.getElementById('chat-window').innerHTML;
-                    if (chatWindow.innerHTML !== newMessages) {
-                        chatWindow.innerHTML = newMessages;
-                        chatWindow.scrollTop = chatWindow.scrollHeight;
-                    }
+                const response = await fetch({{ Illuminate\Support\Js::from(route('chat.messages')) }}, {
+                    method: 'POST', headers: {'Accept': 'application/json'}, body: new FormData(form)
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Unable to send message.');
+                if (newestPage) appendMessage(data);
+                else location.href = {{ Illuminate\Support\Js::from(route('chat.show', $conversation)) }};
+                form.elements.message.value = '';
+                error.textContent = '';
+            } catch (failure) { error.textContent = failure.message; }
+            finally { button.disabled = false; }
+        });
+        async function poll() {
+            try {
+                const response = await fetch({{ Illuminate\Support\Js::from(route('chat.poll', $conversation)) }} + '?after=' + lastId, {headers: {'Accept':'application/json'}});
+                if ([401,403].includes(response.status)) {
+                    error.textContent = 'You no longer have access to this conversation.';
+                    if (form) form.hidden = true;
+                    return;
                 }
-            } catch (e) {
-                console.error('Polling error:', e);
-            }
-        }, 3000);
+                if (!response.ok) throw new Error('Unable to refresh messages.');
+                const messages = await response.json();
+                messages.forEach(data => { appendMessage(data); lastId = Math.max(lastId, data.id); });
+                error.textContent = '';
+            } catch (failure) { error.textContent = failure.message; }
+            setTimeout(poll, 3000);
+        }
+        if (newestPage) setTimeout(poll, 3000);
     </script>
 </x-layouts.app>

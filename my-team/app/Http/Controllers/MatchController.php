@@ -83,8 +83,7 @@ class MatchController extends Controller
     public function store(Request $request, Team $team)
     {
         $userId = session('user_id');
-        \Log::info('Match store attempt', ['user_id' => $userId, 'team_coach_id' => $team->coach_id, 'session_data' => session()->all()]);
-        
+
         $user = User::findOrFail($userId);
 
         if ($team->coach_id !== $user->id) {
@@ -99,46 +98,14 @@ class MatchController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        try {
-            \Log::info('Creating match', [
-                'team_id' => $team->id,
-                'user_id' => $user->id, 
-                'starts_at' => $validated['starts_at'],
-            ]);
-            
-            $match = GameMatch::create([
-                'team_id' => $team->id,
-                'created_by' => $user->id,
-                'starts_at' => Carbon::parse($validated['starts_at']),
-                'location' => $validated['location'] ?? null,
-                'opponent' => $validated['opponent'] ?? null,
-                'notes' => $validated['notes'] ?? null,
-            ]);
-            
-            \Log::info('Match created', [
-                'match_id' => $match->id ?? 'NULL',
-                'match_team_id' => $match->team_id ?? 'NULL',
-                'match_data' => $match->toArray(),
-            ]);
-
-            if (!$match || !$match->id) {
-                \Log::error('Match creation failed', [
-                    'team_id' => $team->id,
-                    'user_id' => $user->id,
-                    'starts_at' => $validated['starts_at'],
-                    'match' => $match,
-                ]);
-                return back()->withErrors(['error' => 'Failed to create match. Please try again.']);
-            }
-        } catch (\Exception $e) {
-            \Log::error('Match creation exception: ' . $e->getMessage(), [
-                'team_id' => $team->id,
-                'user_id' => $user->id,
-                'starts_at' => $validated['starts_at'],
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return back()->withErrors(['error' => 'Error creating match: ' . $e->getMessage()]);
-        }
+        $match = GameMatch::create([
+            'team_id' => $team->id,
+            'created_by' => $user->id,
+            'starts_at' => Carbon::parse($validated['starts_at']),
+            'location' => $validated['location'] ?? null,
+            'opponent' => $validated['opponent'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+        ]);
 
         if ($this->wantsJson($request)) {
             return response()->json($match, 201);
@@ -152,7 +119,7 @@ class MatchController extends Controller
         $user = User::findOrFail(session('user_id'));
         $gameMatch->load(['team', 'players']);
 
-        if (!$gameMatch->team || !$this->canViewTeam($user, $gameMatch->team)) {
+        if (! $gameMatch->team || ! $this->canViewTeam($user, $gameMatch->team)) {
             abort(403, 'Forbidden');
         }
 
@@ -178,7 +145,7 @@ class MatchController extends Controller
         $user = User::findOrFail(session('user_id'));
         $gameMatch->load('team');
 
-        if (!$gameMatch->team || $gameMatch->team->coach_id !== $user->id) {
+        if (! $gameMatch->team || $gameMatch->team->coach_id !== $user->id) {
             abort(403, 'Only the coach can edit matches.');
         }
 
@@ -192,7 +159,7 @@ class MatchController extends Controller
         $user = User::findOrFail(session('user_id'));
         $gameMatch->load('team');
 
-        if (!$gameMatch->team || $gameMatch->team->coach_id !== $user->id) {
+        if (! $gameMatch->team || $gameMatch->team->coach_id !== $user->id) {
             abort(403, 'Only the coach can edit matches.');
         }
 
@@ -217,7 +184,7 @@ class MatchController extends Controller
         $user = User::findOrFail(session('user_id'));
         $gameMatch->load('team');
 
-        if (!$gameMatch->team || $gameMatch->team->coach_id !== $user->id) {
+        if (! $gameMatch->team || $gameMatch->team->coach_id !== $user->id) {
             abort(403, 'Only the coach can delete matches.');
         }
 
@@ -244,12 +211,12 @@ class MatchController extends Controller
             'team_coach_id' => $gameMatch->team?->coach_id,
         ]);
 
-        if (!$gameMatch->team) {
-            abort(403, 'Match is not associated with a team. Match ID: ' . $gameMatch->id . ', Team ID: ' . $gameMatch->team_id);
+        if (! $gameMatch->team) {
+            abort(403, 'Match is not associated with a team. Match ID: '.$gameMatch->id.', Team ID: '.$gameMatch->team_id);
         }
 
         if ($gameMatch->team->coach_id !== $user->id) {
-            abort(403, 'Only the coach can edit the lineup. You are user #' . $user->id . ', coach is #' . $gameMatch->team->coach_id);
+            abort(403, 'Only the coach can edit the lineup. You are user #'.$user->id.', coach is #'.$gameMatch->team->coach_id);
         }
 
         $teamPlayers = $gameMatch->team->players()->orderBy('name')->get();
@@ -271,7 +238,7 @@ class MatchController extends Controller
         $user = User::findOrFail(session('user_id'));
         $gameMatch->load('team');
 
-        if (!$gameMatch->team || $gameMatch->team->coach_id !== $user->id) {
+        if (! $gameMatch->team || $gameMatch->team->coach_id !== $user->id) {
             abort(403, 'Only the coach can edit the lineup.');
         }
 
@@ -322,5 +289,5 @@ class MatchController extends Controller
     }
 }
 
-// MatchController Docblock placeholder 
-// Transaction added to match creation 
+// MatchController Docblock placeholder
+// Transaction added to match creation

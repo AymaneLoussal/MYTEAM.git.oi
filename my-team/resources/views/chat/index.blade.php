@@ -2,7 +2,7 @@
     <div class="mx-auto max-w-6xl p-8">
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-3xl font-black tracking-tight">Messages</h1>
-            <button onclick="document.getElementById('chat-modal').classList.remove('hidden')" class="bg-primary text-on-primary px-4 py-2 rounded-xl font-bold text-sm hover:brightness-110 transition-all">
+            <button @disabled(!$team) onclick="document.getElementById('chat-modal').classList.remove('hidden')" class="bg-primary text-on-primary px-4 py-2 rounded-xl font-bold text-sm hover:brightness-110 transition-all">
                 New Chat
             </button>
         </div>
@@ -18,6 +18,7 @@
                         <p class="text-xs text-slate-500 truncate">{{ $conv->type }}</p>
                     </a>
                 @endforeach
+                {{ $conversations->links() }}
             </div>
             <div class="md:col-span-2">
                 <div class="rounded-3xl border border-black/5 bg-white p-12 text-center text-slate-500">
@@ -42,9 +43,9 @@
                 <div>
                     <label class="block text-sm font-semibold mb-2">Conversation Type</label>
                     <select name="type" id="chat-type" onchange="togglePlayerSelect()" class="w-full rounded-xl border-slate-200 text-sm">
-                        <option value="team_group">Team Group Chat</option>
+                        @if($team?->coach_id === $user->id)<option value="team_group">Team Group Chat</option>@endif
                         <option value="coach_player_private">Private Chat (Coach & Player)</option>
-                        <option value="team_announcement">Team Announcement</option>
+                        @if($team?->coach_id === $user->id)<option value="team_announcement">Team Announcement</option>@endif
                     </select>
                 </div>
 
@@ -53,14 +54,16 @@
                     <select name="player_id" class="w-full rounded-xl border-slate-200 text-sm">
                         @if($team)
                             @foreach($team->players as $player)
+                                @if($team->coach_id === $user->id || $player->id === $user->id)
                                 <option value="{{ $player->id }}">{{ $player->name }}</option>
+                                @endif
                             @endforeach
                         @endif
                     </select>
                 </div>
 
                 <input type="hidden" name="team_id" value="{{ $team?->id }}">
-                
+
                 <div>
                     <label class="block text-sm font-semibold mb-2">Subject (Optional)</label>
                     <input type="text" name="subject" class="w-full rounded-xl border-slate-200 text-sm" placeholder="e.g. Match Strategy">
@@ -79,5 +82,6 @@
             const container = document.getElementById('player-select-container');
             container.classList.toggle('hidden', type !== 'coach_player_private');
         }
+        togglePlayerSelect();
     </script>
 </x-layouts.app>

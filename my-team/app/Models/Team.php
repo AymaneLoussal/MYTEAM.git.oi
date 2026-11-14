@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Formation;
 use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model
@@ -25,8 +24,9 @@ class Team extends Model
      */
     public function players()
     {
-        return $this->belongsToMany(User::class, 'team_user');
+        return $this->belongsToMany(User::class, 'team_user')->withPivot('notes');
     }
+
     /**
      * Invitations related to this team.
      */
@@ -49,6 +49,11 @@ class Team extends Model
     {
         return $this->hasMany(Formation::class);
     }
+
+    public function hasMember(User $user): bool
+    {
+        return $this->coach_id === $user->id || $this->players()->where('users.id', $user->id)->exists();
+    }
 }
-// Team Model Docblock placeholder 
-// Soft deletes stub added 
+// Team Model Docblock placeholder
+// Soft deletes stub added

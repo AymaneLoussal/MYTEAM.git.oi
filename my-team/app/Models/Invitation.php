@@ -3,11 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Invitation extends Model
 {
+    use HasFactory;
+
+    protected $hidden = ['token'];
+
     protected $fillable = [
         'team_id',
         'user_id',
@@ -52,4 +57,4 @@ class Invitation extends Model
         return $this->expires_at !== null && $this->expires_at->isPast();
     }
 }
-// Invitation Model Docblock placeholder 
+// Invitation Model Docblock placeholder

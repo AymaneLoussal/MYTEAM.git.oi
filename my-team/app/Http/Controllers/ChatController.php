@@ -2,124 +2,93 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Team;
 use App\Models\Conversation;
-use App\Models\Message;
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ChatController extends Controller
 {
-    public function __construct()
+    public function index(Request $request)
     {
-        $this->middleware('auth.custom');
-    }
-
-    /**
-     * List all conversations the user is part of.
-     */
-    public function index()
-    {
-        $user = User::findOrFail(session('user_id'));
-        
-        $conversations = Conversation::whereHas('participants', function($q) use ($user) {
-            $q->where('user_id', $user->id);
-        })->with(['team', 'participants'])->latest()->get();
-
-        // Get the user's team to allow creating chats easily
-        $team = Team::where('coach_id', $user->id)->first() 
-                ?? Team::whereHas('players', fn($q) => $q->where('user_id', $user->id))->first();
+        $user = $request->user();
+        $conversations = Conversation::whereHas('participants', fn ($q) => $q->where('users.id', $user->id))
+            ->whereHas('team', fn ($q) => $q->where('coach_id', $user->id)
+                ->orWhereHas('players', fn ($q) => $q->where('users.id', $user->id)))
+            ->with(['team', 'participants'])->latest()->paginate(20);
+        $team = $user->coachTeams()->first() ?? $user->playerTeams()->first();
 
         return view('chat.index', compact('user', 'conversations', 'team'));
     }
 
-    /**
-     * Show a specific conversation and its messages.
-     */
-    public function show(Conversation $conversation)
+    public function show(Request $request, Conversation $conversation)
     {
-        $user = User::findOrFail(session('user_id'));
-
-        // Authorization: Check if user is a participant
-        if (!$conversation->participants()->where('user_id', $user->id)->exists()) {
-            abort(403, 'You do not have access to this conversation.');
-        }
-
-        $messages = $conversation->messages()->with('sender')->orderBy('created_at', 'asc')->get();
+        $this->authorize('view', $conversation);
+        $user = $request->user();
+        $messages = $conversation->messages()->with('sender')->orderByDesc('id')->paginate(50);
 
         return view('chat.show', compact('conversation', 'messages', 'user'));
     }
 
-    /**
-     * Send a message.
-     */
+    public function messages(Request $request, Conversation $conversation)
+    {
+        $this->authorize('view', $conversation);
+        $validated = $request->validate(['after' => 'required|integer|min:0']);
+
+        return response()->json($conversation->messages()->with('sender:id,name')
+            ->where('id', '>', $validated['after'])->orderBy('id')->limit(100)->get());
+    }
+
     public function store(Request $request)
     {
-        $user = User::findOrFail(session('user_id'));
-        $conversationId = $request->conversation_id;
-
-        // Authorization: Check if user is a participant
-        $conversation = Conversation::findOrFail($conversationId);
-        if (!$conversation->participants()->where('user_id', $user->id)->exists()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
         $validated = $request->validate([
+            'conversation_id' => 'required|integer',
             'message' => 'required|string|max:5000',
         ]);
-
-        $message = Message::create([
-            'conversation_id' => $conversationId,
-            'sender_id' => $user->id,
+        $conversation = Conversation::findOrFail($validated['conversation_id']);
+        $this->authorize('send', $conversation);
+        $message = $conversation->messages()->create([
+            'sender_id' => $request->user()->id,
             'message' => $validated['message'],
         ]);
 
-        return response()->json($message);
+        return response()->json($message->load('sender:id,name'), 201);
     }
 
-    /**
-     * Create a new conversation based on type.
-     */
     public function create(Request $request)
     {
-        $user = User::findOrFail(session('user_id'));
-        $type = $request->type; // 'team_group', 'coach_player_private', 'team_announcement'
-        $teamId = $request->team_id;
-
-        if (!$teamId) abort(400, 'Team ID is required');
-        $team = Team::findOrFail($teamId);
-
-        // Only coach can create team-wide chats or announcements
-        if ($type === 'team_group' || $type === 'team_announcement') {
-            if ($team->coach_id !== $user->id) abort(403);
-        }
-
-        $conversation = Conversation::create([
-            'type' => $type,
-            'team_id' => $teamId,
-            'created_by' => $user->id,
-            'subject' => $request->subject ?? 'New Conversation',
+        $validated = $request->validate([
+            'type' => ['required', Rule::in(['team_group', 'coach_player_private', 'team_announcement'])],
+            'team_id' => 'required|integer',
+            'player_id' => 'required_if:type,coach_player_private|nullable|integer',
+            'subject' => 'nullable|string|max:255',
         ]);
+        $team = Team::findOrFail($validated['team_id']);
+        $user = $request->user();
+        abort_unless($team->hasMember($user), 403);
+        $isCoach = $team->coach_id === $user->id;
 
-        if ($type === 'team_group' || $type === 'team_announcement') {
-            // Add all team members + coach
-            $userIds = $team->players()->pluck('users.id')->push($team->coach_id)->unique();
-            $conversation->participants()->attach($userIds);
-        } elseif ($type === 'coach_player_private') {
-            $playerId = $request->player_id;
-            if (!$playerId) abort(400, 'Player ID is required');
-            
-            // Ensure the player is actually in the team
-            if (!$team->players()->where('users.id', $playerId)->exists()) {
-                abort(403, 'Player is not in this team');
-            }
-
-            $conversation->participants()->attach([$user->id, $playerId]);
+        if ($validated['type'] === 'coach_player_private') {
+            $playerId = (int) $validated['player_id'];
+            abort_unless($team->players()->where('users.id', $playerId)->exists(), 403);
+            abort_unless($isCoach || $playerId === $user->id, 403);
+            $participants = [$team->coach_id, $playerId];
+        } else {
+            abort_unless($isCoach, 403);
+            $participants = $team->players()->pluck('users.id')->push($team->coach_id)->unique()->all();
         }
+
+        $conversation = DB::transaction(function () use ($validated, $team, $user, $participants) {
+            $conversation = Conversation::create([
+                'type' => $validated['type'], 'team_id' => $team->id,
+                'created_by' => $user->id, 'subject' => $validated['subject'] ?? 'New Conversation',
+            ]);
+            $conversation->participants()->attach($participants);
+
+            return $conversation;
+        });
 
         return redirect()->route('chat.show', $conversation);
     }
 }
-
-// ChatController Docblock placeholder 

@@ -6,9 +6,12 @@ use App\Mail\TeamInvitationMail;
 use App\Models\Invitation;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\TeamMembership;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class InvitationController extends Controller
 {
@@ -25,14 +28,14 @@ class InvitationController extends Controller
         ]);
 
         $email = strtolower(trim($validated['email']));
-        $targetUser = User::where('email', $email)->first();
+        $targetUser = User::whereRaw('LOWER(email) = ?', [$email])->first();
 
         if ($email === strtolower($coach->email)) {
-            return response()->json(['message' => 'Coach cannot invite themself'], 422);
+            throw ValidationException::withMessages(['email' => 'Coach cannot invite themself']);
         }
 
         if ($targetUser && $team->players()->where('user_id', $targetUser->id)->exists()) {
-            return response()->json(['message' => 'User already in team'], 422);
+            throw ValidationException::withMessages(['email' => 'User already in team']);
         }
 
         $existingInvitation = Invitation::pending()
@@ -41,7 +44,7 @@ class InvitationController extends Controller
             ->first();
 
         if ($existingInvitation && ! $existingInvitation->isExpired()) {
-            return response()->json(['message' => 'A pending invitation already exists for this email'], 422);
+            throw ValidationException::withMessages(['email' => 'A pending invitation already exists for this email']);
         }
 
         $payload = [
@@ -65,6 +68,10 @@ class InvitationController extends Controller
         $invitation->load(['team', 'coach', 'user']);
 
         Mail::to($email)->send(new TeamInvitationMail($invitation));
+
+        if (! $request->expectsJson()) {
+            return back()->with('status', 'Invitation sent.');
+        }
 
         return response()->json([
             'message' => 'Invitation sent successfully',
@@ -93,8 +100,12 @@ class InvitationController extends Controller
         $invitation = Invitation::with(['team', 'coach'])->where('token', $token)->firstOrFail();
 
         if ($invitation->isExpired() && $invitation->status === 'pending') {
-            $invitation->update(['status' => 'expired']);
+            Invitation::whereKey($invitation->id)->where('status', 'pending')->update(['status' => 'expired']);
             $invitation->refresh();
+        }
+
+        if (! $this->currentUser(false) && $invitation->status === 'pending') {
+            session(['invitation_token' => $token]);
         }
 
         return view('invitations.show', [
@@ -105,111 +116,75 @@ class InvitationController extends Controller
 
     public function accept(Request $request, string $token)
     {
-        $invitation = Invitation::where('token', $token)->firstOrFail();
-
-        if ($invitation->status !== 'pending') {
-            return redirect()->route('dashboard')->with('error', 'This invitation has already been processed.');
-        }
-
-        if ($invitation->isExpired()) {
-            $invitation->update(['status' => 'expired']);
-            return redirect()->route('dashboard')->with('error', 'This invitation has expired.');
-        }
-
-        // Check if user exists
-        $existingUser = User::where('email', strtolower(trim($invitation->email)))->first();
-
-        if ($existingUser) {
-            // User exists - check if logged in
-            $currentUser = $this->currentUser(false);
-            
-            if (!$currentUser) {
-                // Not logged in - redirect to login
-                session(['invitation_token' => $token]);
-                return redirect()->route('login.form')->with('message', 'Please log in with your email to join the team.');
-            }
-
-            if (strtolower($currentUser->email) !== strtolower($invitation->email)) {
-                return back()->with('error', 'Please log in with the invited email address.');
-            }
-
-            // Add to team if not already member
-            if (!$invitation->team->players()->where('user_id', $currentUser->id)->exists()) {
-                $invitation->team->players()->attach($currentUser->id);
-            }
-
-            $invitation->update([
-                'user_id' => $currentUser->id,
-                'status' => 'accepted',
-                'responded_at' => now(),
-            ]);
-
-            return redirect()->route('teams.show', $invitation->team)
-                ->with('status', 'Invitation accepted! You have joined the team.');
-        } else {
-            // User doesn't exist - show registration form
-            return view('invitations.register', [
-                'invitation' => $invitation,
+        $invitation = $this->findPendingInvitationByToken($token);
+        $existingUser = User::whereRaw('LOWER(email) = ?', [strtolower($invitation->email)])->first();
+        if (! $existingUser) {
+            return view('invitations.show', [
+                'invitation' => $invitation->load(['team', 'coach']),
+                'currentUser' => null,
+                'showRegistration' => true,
             ]);
         }
+        $user = $this->currentUser(false);
+        if (! $user) {
+            session(['invitation_token' => $token]);
+
+            return redirect()->route('login.form')->with('status', 'Please sign in with the invited email.');
+        }
+        abort_if($this->invitationEmailMismatch($invitation, $user), 403, 'Please sign in with the invited email.');
+        DB::transaction(function () use ($token, $user) {
+            $invitation = $this->findPendingInvitationByToken($token, true);
+            app(TeamMembership::class)->addPlayer($user, $invitation->team);
+            $invitation->update(['user_id' => $user->id, 'status' => 'accepted', 'responded_at' => now()]);
+        });
+
+        return redirect()->route('teams.show', $invitation->team)->with('status', 'Invitation accepted!');
     }
 
     public function registerAndAccept(Request $request, string $token)
     {
-        $invitation = Invitation::where('token', $token)->firstOrFail();
+        $invitation = $this->findPendingInvitationByToken($token);
+        if (User::whereRaw('LOWER(email) = ?', [strtolower($invitation->email)])->exists()) {
+            session(['invitation_token' => $token]);
 
-        if ($invitation->status !== 'pending') {
-            return back()->with('error', 'This invitation has already been processed.');
+            return redirect()->route('login.form')->with('status', 'An account already exists. Please sign in to accept.');
         }
-
-        if ($invitation->isExpired()) {
-            $invitation->update(['status' => 'expired']);
-            return back()->with('error', 'This invitation has expired.');
-        }
-
+        abort_if($this->currentUser(false), 403, 'Sign out before registering another account.');
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'password' => 'required|string|min:6|confirmed',
         ]);
+        $user = DB::transaction(function () use ($token, $validated) {
+            $invitation = $this->findPendingInvitationByToken($token, true);
+            if (User::whereRaw('LOWER(email) = ?', [strtolower($invitation->email)])->exists()) {
+                throw ValidationException::withMessages(['email' => 'An account already exists. Please sign in.']);
+            }
+            $user = User::create([
+                'name' => $validated['name'], 'email' => strtolower($invitation->email),
+                'password' => bcrypt($validated['password']),
+            ]);
+            app(TeamMembership::class)->addPlayer($user, $invitation->team);
+            $invitation->update(['user_id' => $user->id, 'status' => 'accepted', 'responded_at' => now()]);
 
-        // Create new user
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $invitation->email,
-            'password' => bcrypt($validated['password']),
-        ]);
-
-        // Add to team
-        $invitation->team->players()->attach($user->id);
-
-        // Mark invitation as accepted
-        $invitation->update([
-            'user_id' => $user->id,
-            'status' => 'accepted',
-            'responded_at' => now(),
-        ]);
-
-        // Auto login
+            return $user;
+        });
         session(['user_id' => $user->id]);
+        session()->regenerate();
+        session()->forget('invitation_token');
 
-        return redirect()->route('teams.show', $invitation->team)
-            ->with('status', 'Welcome! Your account has been created and you have joined the team.');
+        return redirect()->route('teams.show', $invitation->team)->with('status', 'Welcome! You have joined the team.');
     }
 
     public function reject(Request $request, string $token)
     {
         $user = $this->currentUser();
-        $invitation = $this->findPendingInvitationByToken($token);
+        $invitation = DB::transaction(function () use ($user, $token) {
+            $invitation = $this->findPendingInvitationByToken($token, true);
+            abort_if($this->invitationEmailMismatch($invitation, $user), 403, 'Please sign in with the invited email.');
+            $invitation->update(['user_id' => $user->id, 'status' => 'rejected', 'responded_at' => now()]);
 
-        if ($this->invitationEmailMismatch($invitation, $user)) {
-            return response()->json(['message' => 'Please sign in with the invited email address'], 403);
-        }
-
-        $invitation->update([
-            'user_id' => $user->id,
-            'status' => 'rejected',
-            'responded_at' => now(),
-        ]);
+            return $invitation;
+        });
 
         if ($request->expectsJson()) {
             return response()->json(['message' => 'Invitation rejected successfully']);
@@ -230,16 +205,17 @@ class InvitationController extends Controller
         return $user;
     }
 
-    private function findPendingInvitationByToken(string $token): Invitation
+    private function findPendingInvitationByToken(string $token, bool $lock = false): Invitation
     {
-        $invitation = Invitation::with('team')->where('token', $token)->firstOrFail();
+        $query = Invitation::with('team')->where('token', $token);
+        $invitation = ($lock ? $query->lockForUpdate() : $query)->firstOrFail();
 
         if ($invitation->status !== 'pending') {
             abort(410, 'This invitation has already been processed.');
         }
 
         if ($invitation->isExpired()) {
-            $invitation->update(['status' => 'expired']);
+            Invitation::whereKey($invitation->id)->where('status', 'pending')->update(['status' => 'expired']);
             abort(410, 'This invitation has expired.');
         }
 
@@ -251,4 +227,4 @@ class InvitationController extends Controller
         return strtolower($invitation->email) !== strtolower($user->email);
     }
 }
-// InvitationController Docblock placeholder 
+// InvitationController Docblock placeholder

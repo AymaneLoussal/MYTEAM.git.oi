@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta content="width=device=device-width, initial-scale=1.0" name="viewport" />
     <title>Team Invitation | Tactical Sanctum</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Inter:wght@100..900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    @include('components.assets')
+
+
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #121413; color: #e2e3e0; }
         h1, h2, h3 { font-family: 'Manrope', sans-serif; }
@@ -22,7 +22,8 @@
 
     <main class="flex-grow flex items-center justify-center p-6 md:p-12">
         <div class="w-full max-w-2xl">
-            @if($invitation->isExpired() || $invitation->status !== 'pending')
+            @include('components.feedback')
+            @if($invitation->status === 'expired' || ($invitation->status === 'pending' && $invitation->isExpired()))
                 <div class="bg-surface-container-high p-8 rounded-lg border border-error/30 text-center">
                     <span class="material-symbols-outlined text-4xl text-error mb-4 block">error</span>
                     <h1 class="text-2xl font-bold mb-2">Invitation Expired</h1>
@@ -40,6 +41,8 @@
                         View Team
                     </a>
                 </div>
+            @elseif($invitation->status === 'rejected')
+                <h1 class="text-2xl font-bold">Invitation Declined</h1>
             @else
                 <div class="bg-surface-container-high p-8 md:p-10 rounded-lg border border-outline-variant/10">
                     <div class="text-center mb-8">
@@ -55,11 +58,11 @@
                         </div>
                         <div class="mb-6">
                             <label class="text-xs text-secondary font-bold uppercase tracking-wider">Invited By</label>
-                            <p class="text-lg font-bold mt-1">{{ $invitation->coach->name }}</p>
+                            <p class="text-lg font-bold mt-1">{{ $invitation->coach?->name ?? 'Team coach' }}</p>
                         </div>
                         <div>
                             <label class="text-xs text-secondary font-bold uppercase tracking-wider">Invitation Expires</label>
-                            <p class="text-lg font-bold mt-1">{{ $invitation->expires_at->format('M d, Y') }}</p>
+                            <p class="text-lg font-bold mt-1">{{ $invitation->expires_at?->format('M d, Y') ?? 'No expiration' }}</p>
                         </div>
                     </div>
 
@@ -87,7 +90,7 @@
                         <!-- User not logged in -->
                         <div class="space-y-4">
                             <p class="text-secondary text-sm">To join this team, please log in or create an account.</p>
-                            
+
                             <div class="flex gap-4">
                                 <form method="GET" action="{{ route('login.form') }}" class="flex-1">
                                     <button type="submit" class="w-full bg-primary text-on-primary px-6 py-3 rounded-lg font-bold hover:bg-primary/90 transition-all">
@@ -116,7 +119,7 @@
                         </div>
 
                         <!-- Registration Form (hidden by default) -->
-                        <div id="registerForm" class="hidden mt-8 pt-8 border-t border-outline-variant/20">
+                        <div id="registerForm" class="{{ ($showRegistration ?? false) || $errors->any() ? '' : 'hidden' }} mt-8 pt-8 border-t border-outline-variant/20">
                             <h2 class="text-xl font-bold mb-6">Create Account</h2>
                             <form method="POST" action="{{ route('invitations.register', $invitation->token) }}" class="space-y-4">
                                 @csrf

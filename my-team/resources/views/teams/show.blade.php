@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta content="width=device=device-width, initial-scale=1.0" name="viewport" />
     <title>{{ $team->name }} | Tactical Sanctum</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Inter:wght@100..900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    @include('components.assets')
+
+
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #121413; color: #e2e3e0; }
         h1, h2, h3 { font-family: 'Manrope', sans-serif; }
@@ -91,7 +91,7 @@
                                                 rows="2" 
                                                 class="w-full bg-surface-container border border-outline-variant/30 rounded-lg p-3 text-xs focus:ring-2 focus:ring-primary focus:border-transparent @error('notes') border-error @enderror"
                                                 placeholder="Add coach notes..."
-                                            >{{ old('notes', $player->notes ?? '') }}</textarea>
+                                            >{{ old('notes', $player->pivot->notes ?? '') }}</textarea>
                                             @error('notes')
                                                 <p class="text-error text-xs">{{ $message }}</p>
                                             @enderror
@@ -99,8 +99,8 @@
                                                 Save Notes
                                             </button>
                                         </form>
-                                    @elseif($player->notes && $isCoach)
-                                        <p class="text-xs text-secondary mt-3 italic p-3 bg-surface-container-low rounded-lg">{{ $player->notes }}</p>
+                                    @elseif($player->pivot->notes && $isCoach)
+                                        <p class="text-xs text-secondary mt-3 italic p-3 bg-surface-container-low rounded-lg">{{ $player->pivot->notes }}</p>
                                     @endif
                                 </div>
                             @endforeach
@@ -139,7 +139,7 @@
                                     Send Invite
                                 </button>
                             </form>
-                            
+
                             @if(session('status'))
                                 <div class="mt-4 p-3 bg-primary/20 text-primary rounded-lg text-sm">
                                     ✓ {{ session('status') }}
