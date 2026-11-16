@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Formation extends Model
 {
-    protected $fillable = ['team_id', 'created_by', 'title', 'positions'];
+    protected $fillable = ['team_id', 'created_by', 'title', 'positions', 'preset'];
 
     protected $casts = [
         'positions' => 'array',

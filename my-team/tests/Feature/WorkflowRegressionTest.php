@@ -95,9 +95,18 @@ class WorkflowRegressionTest extends TestCase
         $this->withSession(['user_id' => $user->id])->patchJson('/profile', [
             'avatar' => UploadedFile::fake()->createWithContent('avatar.png', $png),
         ])->assertOk()->assertJsonPath('user.avatar_url', fn ($url) => str_contains($url, '/storage/avatars/'));
-        Storage::disk('public')->assertExists($user->fresh()->avatar);
+        $storedAvatar = $user->fresh()->avatar;
+        Storage::disk('public')->assertExists($storedAvatar);
+        $this->assertSame('/storage/'.$storedAvatar, parse_url($user->fresh()->avatar_url, PHP_URL_PATH));
+        Storage::disk('public')->assertExists(User::findOrFail($user->id)->avatar);
         Storage::disk('public')->assertMissing('avatars/old.png');
-        $this->patchJson('/profile', ['avatar' => UploadedFile::fake()->createWithContent('bad.php', '<?php echo 1;')])->assertUnprocessable();
+        $this->patchJson('/profile', [
+            'avatar' => UploadedFile::fake()->createWithContent('bad.php', '<?php echo 1;'),
+        ])->assertUnprocessable()->assertJsonValidationErrors('avatar');
+        $this->patchJson('/profile', [
+            'avatar' => UploadedFile::fake()->create('too-large.jpg', 2049, 'image/jpeg'),
+        ])->assertUnprocessable()->assertJsonValidationErrors('avatar');
+        $this->assertSame($storedAvatar, $user->fresh()->avatar);
     }
 
     public function test_expired_and_processed_invitations_cannot_be_reused(): void

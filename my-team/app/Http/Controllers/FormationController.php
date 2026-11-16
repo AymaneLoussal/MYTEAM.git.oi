@@ -95,6 +95,7 @@ class FormationController extends Controller
         Formation::create([
             'team_id' => $team->id,
             'created_by' => $user->id,
+            'preset' => $validated['preset'] ?? null,
             'title' => $validated['title'],
             'positions' => $validated['positions'],
         ]);
@@ -141,6 +142,7 @@ class FormationController extends Controller
         $validated = $this->validatePositions($request, $formation->team);
 
         $formation->update([
+            'preset' => $validated['preset'] ?? $formation->preset,
             'title' => $validated['title'],
             'positions' => $validated['positions'],
         ]);
@@ -156,15 +158,39 @@ class FormationController extends Controller
             $request->merge(['positions' => json_decode($request->input('positions'), true)]);
         }
 
-        return $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'positions' => 'required|array|min:1|max:11',
-            'positions.*' => 'required|array:player_id,x,y,role',
+            'preset' => ['sometimes', 'required', Rule::in(array_keys(config('tactics.presets')))],
+            'positions' => 'required|array|min:1',
+            'positions.*' => 'required|array:player_id,x,y,role,status,position,slot',
+            'positions.*.position' => ['sometimes', 'required', Rule::in(array_keys(config('tactics.roles')))],
+            'positions.*.slot' => 'sometimes|nullable|integer|min:0|max:10',
             'positions.*.player_id' => ['required', 'integer', 'distinct', Rule::exists('team_user', 'user_id')->where('team_id', $team->id)],
             'positions.*.x' => 'required|numeric|min:0|max:100',
             'positions.*.y' => 'required|numeric|min:0|max:100',
             'positions.*.role' => 'required|in:GK,DEF,MID,FWD,starter,substitute',
+            'positions.*.status' => 'sometimes|required|in:starter,substitute',
         ]);
+        $starters = 0; $slots = [];
+        foreach ($validated['positions'] as &$position) {
+            $status = $position['status'] ?? ($position['role'] === 'substitute' ? 'substitute' : 'starter');
+            if (isset($position['status']) && in_array($position['role'], ['starter', 'substitute'])) {
+                throw \Illuminate\Validation\ValidationException::withMessages(['positions' => 'Tactical role must be GK, DEF, MID or FWD.']);
+            }
+            if ($status === 'starter') $starters++;
+            if (isset($validated['preset']) || isset($position['position']) || array_key_exists('slot', $position)) {
+                if (!isset($position['position'], $position['status']) || config('tactics.roles.'.$position['position']) !== $position['role']) {
+                    throw \Illuminate\Validation\ValidationException::withMessages(['positions'=>'Specific position must match the broad role and include squad status.']);
+                }
+                if ($status === 'starter') {
+                    if (!isset($position['slot']) || in_array($position['slot'], $slots)) throw \Illuminate\Validation\ValidationException::withMessages(['positions'=>'Each starter requires a unique tactical slot.']);
+                    $slots[] = $position['slot'];
+                } elseif (isset($position['slot'])) throw \Illuminate\Validation\ValidationException::withMessages(['positions'=>'Substitutes cannot occupy pitch slots.']);
+            }
+        }
+        unset($position);
+        if ($starters > 11) throw \Illuminate\Validation\ValidationException::withMessages(['positions' => 'Maximum 11 starters.']);
+        return $validated;
     }
 
     public function edit(Formation $formation)

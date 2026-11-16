@@ -18,19 +18,9 @@
     </style>
 </head>
 <body class="bg-background text-on-surface antialiased min-h-screen flex flex-col">
-    <header class="bg-[#121413] sticky top-0 z-50">
-        <div class="flex justify-between items-center px-8 py-4">
-            <a href="{{ route('dashboard') }}" class="text-2xl font-black tracking-tighter text-[#a1d494]">Tactical Sanctum</a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="text-[#b9cbbe] hover:text-[#a1d494] transition-colors">
-                    <span class="material-symbols-outlined">logout</span>
-                </button>
-            </form>
-        </div>
-    </header>
+    @include('components.navigation')
 
-    <main class="flex-grow p-6 md:p-12">
+    <main id="main-content" tabindex="-1" class="flex-grow p-6 md:p-12">
         <div class="max-w-6xl mx-auto">
             <div class="mb-8 flex justify-between items-center">
                 <div>
@@ -46,7 +36,7 @@
             @if($formations->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($formations as $formation)
-                        <div class="bg-surface-container-high p-6 rounded-xl border border-outline-variant/10 hover:shadow-lg transition-all cursor-pointer" onclick="location.href='{{ route('formations.show', $formation) }}'">
+                        <a class="block bg-surface-container-high p-6 rounded-xl border border-outline-variant/10 hover:shadow-lg transition-all cursor-pointer" href="{{ route('formations.show', $formation) }}">
                             <div class="flex items-start justify-between mb-4">
                                 <div>
                                     <h3 class="text-lg font-bold">{{ $formation->title }}</h3>
@@ -56,7 +46,7 @@
                             </div>
                             <p class="text-xs text-secondary mb-4">{{ $formation->created_at->format('M d, Y') }}</p>
                             <p class="text-xs text-on-secondary-fixed">{{ count($formation->positions ?? []) }} Position{{ count($formation->positions ?? []) !== 1 ? 's' : '' }}</p>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             @else

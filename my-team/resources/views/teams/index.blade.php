@@ -14,19 +14,9 @@
     </style>
 </head>
 <body class="bg-background text-on-surface antialiased min-h-screen flex flex-col">
-    <header class="bg-[#121413] sticky top-0 z-50">
-        <div class="flex justify-between items-center px-8 py-4">
-            <a href="{{ route('dashboard') }}" class="text-2xl font-black tracking-tighter text-[#a1d494]">Tactical Sanctum</a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="text-[#b9cbbe] hover:text-[#a1d494] transition-colors">
-                    <span class="material-symbols-outlined">logout</span>
-                </button>
-            </form>
-        </div>
-    </header>
+    @include('components.navigation')
 
-    <main class="flex-grow p-6 md:p-12">
+    <main id="main-content" tabindex="-1" class="flex-grow p-6 md:p-12">
         <div class="max-w-6xl mx-auto">
             <div class="mb-8">
                 <a href="{{ route('dashboard') }}" class="text-primary hover:text-primary/80 text-sm flex items-center gap-2 mb-4">

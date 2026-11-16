@@ -48,6 +48,9 @@ class ProfileController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => 'nullable|string|min:6|confirmed',
             'current_password' => 'nullable|string',
+        ], [
+            'avatar.uploaded' => 'The avatar could not be processed. Choose a JPEG, PNG, or GIF up to 2 MB.',
+            'avatar.max' => 'The avatar may not be greater than 2 MB.',
         ]);
 
         if (! empty($validated['password']) || (isset($validated['email']) && $validated['email'] !== $user->email)) {

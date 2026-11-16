@@ -40,68 +40,16 @@
 
 <body class="bg-background text-on-surface antialiased min-h-screen flex flex-col">
     <!-- TopNavBar -->
-    <header class="bg-[#121413] dark:bg-[#121413] sticky top-0 z-50">
-        <div class="flex justify-between items-center px-8 py-4 w-full max-w-screen-2xl mx-auto">
-            <div class="text-2xl font-black tracking-tighter text-[#a1d494]">Tactical Sanctum</div>
-            <nav class="hidden md:flex items-center gap-8">
-                <a href="{{ route('dashboard') }}" class="font-label text-sm hover:text-primary transition-colors">Dashboard</a>
-                <a href="{{ route('formations.index') }}" class="font-label text-sm hover:text-primary transition-colors">Formations</a>
-                <a href="{{ route('trainings.index') }}" class="font-label text-sm hover:text-primary transition-colors">Trainings</a>
-                <a href="{{ route('matches.index') }}" class="font-label text-sm hover:text-primary transition-colors">Matches</a>
-            </nav>
-            <div class="flex items-center gap-4">
-                <a href="{{ route('profile.show') }}" class="text-[#b9cbbe] hover:text-[#a1d494] transition-colors">
-                    <span class="material-symbols-outlined">person</span>
-                </a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="text-[#b9cbbe] hover:text-[#a1d494] transition-colors">
-                        <span class="material-symbols-outlined">logout</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </header>
+    @include('components.navigation')
 
-    <main class="flex-grow flex flex-col md:flex-row relative lg:ml-0">
-        <aside class="fixed left-0 top-0 h-full flex flex-col z-40 h-screen w-64 glass-sidebar shadow-[0_20px_40px_rgba(0,0,0,0.4)] hidden lg:flex">
-            <div class="p-8 flex flex-col h-full">
-                <div class="mb-12">
-                    <div class="w-16 h-16 bg-primary-container/30 rounded-2xl flex items-center justify-center mb-4">
-                        <span class="material-symbols-outlined text-primary text-4xl">dashboard</span>
-                    </div>
-                    <h2 class="text-primary font-headline text-xl font-bold tracking-tight">Dashboard</h2>
-                    <p class="text-secondary text-xs font-label">Coach Hub</p>
-                </div>
-                <nav class="space-y-2 flex-grow">
-                    <div class="flex items-center gap-3 bg-[#2d5a27] text-[#a1d494] rounded-xl px-4 py-3">
-                        <span class="material-symbols-outlined">dashboard</span>
-                        <span class="font-label text-sm">Dashboard</span>
-                    </div>
-                    <div class="flex items-center gap-3 hover:bg-surface-container-high text-[#b9cbbe] px-4 py-3 rounded-xl transition-all cursor-pointer" onclick="location.href='{{ route('teams.index') }}'">
-                        <span class="material-symbols-outlined">groups</span>
-                        <span class="font-label text-sm">Teams</span>
-                    </div>
-                    <div class="flex items-center gap-3 hover:bg-surface-container-high text-[#b9cbbe] px-4 py-3 rounded-xl transition-all cursor-pointer" onclick="location.href='{{ route('formations.index') }}'">
-                        <span class="material-symbols-outlined">stadium</span>
-                        <span class="font-label text-sm">Formations</span>
-                    </div>
-                    <div class="flex items-center gap-3 hover:bg-surface-container-high text-[#b9cbbe] px-4 py-3 rounded-xl transition-all cursor-pointer" onclick="location.href='{{ route('trainings.index') }}'">
-                        <span class="material-symbols-outlined">fitness_center</span>
-                        <span class="font-label text-sm">Trainings</span>
-                    </div>
-                    <div class="flex items-center gap-3 hover:bg-surface-container-high text-[#b9cbbe] px-4 py-3 rounded-xl transition-all cursor-pointer" onclick="location.href='{{ route('matches.index') }}'">
-                        <span class="material-symbols-outlined">sports_soccer</span>
-                        <span class="font-label text-sm">Matches</span>
-                    </div>
-                </nav>
-            </div>
-        </aside>
-        <section class="flex-grow flex items-center justify-center p-6 md:p-12 lg:ml-64 bg-surface-container-low">
+    <main id="main-content" tabindex="-1" class="flex-grow flex flex-col md:flex-row relative lg:ml-0">
+        @include('components.feedback')
+
+        <section class="flex-grow flex items-center justify-center p-6 md:p-12  bg-surface-container-low">
             <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <div class="lg:col-span-4 space-y-6">
                     <div class="inline-flex items-center px-3 py-1 rounded-full bg-primary-container/20 text-primary text-[10px] font-bold tracking-widest uppercase">
-                        Welcome Coach {{ $user->name }}
+                        Welcome {{ $user->name }}
                     </div>
                     <h1 class="text-4xl lg:text-5xl font-black text-on-surface leading-tight tracking-tighter">
                         <span class="text-primary">Your </span> Dynasty Awaits
@@ -120,10 +68,10 @@
                                 <form method="POST" action="{{ route('dashboard.teams.create') }}" class="space-y-3">
                                     @csrf
                                     <div>
-                                        <input 
-                                            name="name" 
-                                            placeholder="e.g. FC Legacy" 
-                                            class="w-full bg-surface-container border border-outline-variant/30 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent placeholder-secondary/50 @error('name') border-error @enderror" 
+                                        <input
+                                            name="name"
+                                            placeholder="e.g. FC Legacy"
+                                            class="w-full bg-surface-container border border-outline-variant/30 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent placeholder-secondary/50 @error('name') border-error @enderror"
                                             required
                                             value="{{ old('name') }}"
                                         >
@@ -152,29 +100,27 @@
                                 </a>
                             </div>
                         @endif
-                        <div class="bg-surface-container-lowest p-6 rounded-xl border hover:shadow-md transition-all cursor-pointer" onclick="location.href='{{ route('teams.index') }}'">
+                        <a class="block bg-surface-container-lowest p-6 rounded-xl border hover:shadow-md transition-all cursor-pointer" href="{{ route('teams.index') }}">
                             <span class="material-symbols-outlined text-primary text-2xl mb-3 block">stadium</span>
                             <h3 class="text-lg font-bold mb-2">My Teams</h3>
                             <p class="text-xs text-secondary">Manage rosters and notes</p>
-                        </div>
-                        <div class="bg-surface-container-lowest p-6 rounded-xl border hover:shadow-md transition-all cursor-pointer" onclick="location.href='{{ route('formations.index') }}'">
+                        </a>
+                        <a class="block bg-surface-container-lowest p-6 rounded-xl border hover:shadow-md transition-all cursor-pointer" href="{{ route('formations.index') }}">
                             <span class="material-symbols-outlined text-primary text-2xl mb-3 block">draw</span>
                             <h3 class="text-lg font-bold mb-2">Tactics</h3>
                             <p class="text-xs text-secondary">Formation builder</p>
-                        </div>
+                        </a>
                     </div>
                     <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-surface-container-lowest p-6 rounded-xl">
                             <h4 class="text-sm font-bold uppercase tracking-widest text-secondary mb-4">Pending Invites</h4>
                             @forelse ($pendingInvitations as $inv)
-                            <div class="flex items-center gap-3 p-3 bg-surface-container-high rounded-lg mb-3">
-                                <img class="w-8 h-8 rounded-full" src="{{ $inv->coach->avatar_url ?? asset('images/default-avatar.svg') }}" alt="">
-                                <div>
-                                    <p class="font-bold text-sm">{{ $inv->team->name }}</p>
-                                    <p class="text-xs text-secondary">{{ $inv->coach->name ?? 'Coach' }}</p>
-                                </div>
-                                <span class="ml-auto text-primary text-xs font-bold">Use the invitation link in your email</span>
-                            </div>
+                            <article class="p-4 bg-surface-container-high rounded-xl mb-3 space-y-2">
+                                <div class="flex flex-wrap justify-between gap-2"><h5 class="font-bold">{{ $inv->team->name }}</h5><span class="text-primary text-xs font-bold">Pending</span></div>
+                                <p class="text-sm text-secondary">Invited by {{ $inv->coach->name ?? 'Team coach' }}</p>
+                                <p class="text-sm text-secondary">{{ $inv->expires_at ? 'Expires '.$inv->expires_at->format('M d, Y H:i') : 'No expiration date' }}</p>
+                                <p class="text-sm">To review, accept or decline, open the <strong>Review Invitation</strong> link sent to your email. Check spam, or ask your coach to resend it after configuring email delivery.</p>
+                            </article>
                             @empty
                             <p class="text-xs text-secondary italic">No invites</p>
                             @endforelse
