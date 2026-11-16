@@ -1,0 +1,19 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env.docker
+    ports:
+      - "${FTMBALL_PORT:-8080}:8080"
+    volumes:
+      - ftmball_sqlite:/app/database
+      - ftmball_uploads:/app/storage/app/public
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents(\"http://127.0.0.1:8080/up\")===false?1:0);"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+volumes:
+  ftmball_sqlite:
+  ftmball_uploads:

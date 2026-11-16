@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Team;
 use App\Models\Invitation;
+use App\Models\Team;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -38,12 +38,12 @@ class InvitationTest extends TestCase
         $team = Team::factory()->create(['coach_id' => $coach->id]);
         $invitation = Invitation::factory()->create([
             'team_id' => $team->id,
-            'coach_id' => $coach->id,
+            'invited_by' => $coach->id,
             'email' => 'player@example.com',
         ]);
 
         // Simulate accepting invitation (assuming it's a public route)
-        $response = $this->patch(route('invitations.accept', $invitation->token), [
+        $response = $this->post(route('invitations.register', $invitation->token), [
             'name' => 'New Player',
             'email' => 'player@example.com',
             'password' => 'password123',

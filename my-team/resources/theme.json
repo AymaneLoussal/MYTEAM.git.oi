@@ -1,0 +1,76 @@
+{
+  "darkMode": "class",
+  "theme": {
+    "extend": {
+      "colors": {
+        "secondary-container": "#3d4d43",
+        "secondary": "#b9cbbe",
+        "on-error": "#690005",
+        "inverse-on-surface": "#2f3130",
+        "surface": "#121413",
+        "on-tertiary-fixed-variant": "#71314c",
+        "surface-container-low": "#1a1c1b",
+        "surface-tint": "#a1d494",
+        "surface-bright": "#383a38",
+        "surface-container-lowest": "#0d0f0e",
+        "on-primary-fixed": "#002201",
+        "background": "#121413",
+        "error-container": "#93000a",
+        "tertiary-container": "#7c3a55",
+        "surface-variant": "#333534",
+        "primary": "#a1d494",
+        "on-secondary-fixed": "#101f16",
+        "tertiary": "#ffb0cc",
+        "surface-container": "#1e201f",
+        "error": "#ffb4ab",
+        "inverse-surface": "#e2e3e0",
+        "on-secondary-fixed-variant": "#3b4a40",
+        "on-background": "#e2e3e0",
+        "tertiary-fixed-dim": "#ffb0cc",
+        "outline": "#8c9387",
+        "on-tertiary-container": "#ffaac8",
+        "on-secondary": "#24342b",
+        "primary-container": "#2d5a27",
+        "on-primary-container": "#9dd090",
+        "on-tertiary": "#561b35",
+        "secondary-fixed": "#d5e7d9",
+        "surface-container-highest": "#333534",
+        "on-secondary-container": "#abbdb0",
+        "surface-container-high": "#282a29",
+        "on-primary-fixed-variant": "#23501e",
+        "on-error-container": "#ffdad6",
+        "on-surface-variant": "#c2c9bb",
+        "primary-fixed": "#bcf0ae",
+        "surface-dim": "#121413",
+        "primary-fixed-dim": "#a1d494",
+        "on-tertiary-fixed": "#3b0520",
+        "secondary-fixed-dim": "#b9cbbe",
+        "on-surface": "#e2e3e0",
+        "outline-variant": "#42493e",
+        "tertiary-fixed": "#ffd9e4",
+        "inverse-primary": "#3b6934",
+        "on-primary": "#0a3909"
+      },
+      "fontFamily": {
+        "headline": [
+          "Manrope",
+          "sans-serif"
+        ],
+        "body": [
+          "Inter",
+          "sans-serif"
+        ],
+        "label": [
+          "Inter",
+          "sans-serif"
+        ]
+      },
+      "borderRadius": {
+        "DEFAULT": "0.75rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      }
+    }
+  }
+}

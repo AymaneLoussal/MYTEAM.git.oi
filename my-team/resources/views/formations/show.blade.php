@@ -1,16 +1,12 @@
-@extends('components.layouts.app')
-
-@section('title', $formation->title)
-
-<x-header title="Formation: {{ $formation->title }}" />
+<x-layouts.app title="Formations">
 
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-3xl font-black tracking-tight">{{ $formation->title }}</h1>
-            <p class="text-slate-600">Created {{ $formation->created_at->format('M j, Y') }} by {{ $formation->creator->name }}</p>
+            <p class="text-secondary">Created {{ $formation->created_at->format('M j, Y') }} by {{ $formation->creator->name }}</p>
         </div>
-        <a href="{{ route('formations.team', $formation->team) }}" class="rounded-xl border border-slate-200 bg-white px-6 py-3 font-bold text-slate-800 hover:bg-slate-50">← Team Formations</a>
+        <a href="{{ route('formations.team', $formation->team) }}" class="rounded-xl border border-outline-variant bg-surface-container px-6 py-3 font-bold text-on-surface hover:bg-surface-container-high">← Team Formations</a>
     </div>
 
     <div id="pitch-view" class="relative w-full h-[500px] bg-gradient-to-b from-green-400 to-green-600 rounded-2xl border-4 border-white shadow-2xl overflow-hidden">
@@ -20,21 +16,21 @@
             <rect fill="#ff4444" x="10" y="125" width="40" height="150" rx="5"/>
             <rect fill="#4488ff" x="550" y="125" width="40" height="150" rx="5"/>
         </svg>
-        @foreach($formation->positions as $pos)
+        @foreach(collect($formation->positions)->filter(fn($p) => ($p['status'] ?? ($p['role'] === 'substitute' ? 'substitute' : 'starter')) === 'starter') as $pos)
             @php
                 $player = $players->find($pos['player_id']);
             @endphp
-            <div class="absolute text-xs bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border flex items-center gap-1 font-bold" 
+            <div class="absolute text-xs bg-surface-container/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border flex items-center gap-1 font-bold"
                  style="left: {{ $pos['x'] }}%; top: {{ $pos['y'] }}%;">
-                {{ $player?->name?->slice(0,6) ?? 'Unknown' }}
+                {{ \Illuminate\Support\Str::limit($player?->name ?? 'Unknown', 6) ?? 'Unknown' }}
                 <span class="text-xs bg-slate-200 px-1 rounded">{{ $pos['role'] ?? 'N/A' }}</span>
             </div>
         @endforeach
     </div>
 
-    @if($isCoach)
+    <section class="fb-panel"><h2>Substitutes Bench</h2>@foreach(collect($formation->positions)->filter(fn($p) => ($p['status'] ?? ($p['role'] === 'substitute' ? 'substitute' : 'starter')) === 'substitute') as $pos)<p>{{ $players->find($pos['player_id'])?->name ?? 'Former player' }} - {{ in_array($pos['role'], ['GK','DEF','MID','FWD']) ? $pos['role'] : 'MID' }}</p>@endforeach</section>@if($isCoach)
         <div class="flex gap-3">
-            <a href="#" onclick="editThis({{ $formation->id }})" class="flex-1 rounded-xl bg-slate-900 px-6 py-3 text-center font-bold text-white hover:brightness-110">Edit</a>
+            <a href="{{ route('formations.edit', $formation) }}" class="flex-1 rounded-xl bg-slate-900 px-6 py-3 text-center font-bold text-white hover:brightness-110">Edit</a>
             <form method="POST" action="{{ route('formations.destroy', $formation) }}" class="flex-1" onsubmit="return confirm('Delete?')">
                 @csrf @method('DELETE')
                 <button class="w-full rounded-xl border border-red-200 bg-red-50 px-6 py-3 font-bold text-red-700 hover:bg-red-100">Delete</button>
@@ -42,11 +38,4 @@
         </div>
     @endif
 </div>
-
-<script>
-function editThis(id) {
-    // Redirect or modal
-    window.location = `/teams/{{ $formation->team_id }}/formations/create?edit=${id}`;
-}
-</script>
-
+</x-layouts.app>

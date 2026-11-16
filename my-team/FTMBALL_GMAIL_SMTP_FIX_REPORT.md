@@ -1,0 +1,26 @@
+# FTMBALL Gmail SMTP investigation and fixes
+
+## Root cause and diagnostics
+The reported socket error was reproduced inside the restricted execution sandbox: PHP returned Windows WSAEACCES 10013 for smtp.gmail.com on both 587 and 465. PowerShell TCP checks also failed there, while DNS resolved and ping succeeded. Repeating the same PHP and PowerShell tests outside the sandbox succeeded on both ports. Therefore the demonstrated cause is process execution-context network isolation, not Gmail authentication or a general ISP SMTP block. The exact Windows filtering rule was not inspected or modified. If the browser's Laravel server was launched within that restricted context, restart it from an ordinary user PowerShell terminal outside that sandbox using `php artisan serve --host=127.0.0.1 --port=8000` after stopping that server. Administrator rights should not be necessary. A separately launched server was not tested in this task.
+
+Outside the sandbox, Gmail returned greeting 220, EHLO 250 and STARTTLS 220; PHP completed a certificate-verified TLS handshake. No authentication or email transmission occurred. Firewall Domain/Private/Public profiles remain enabled; default outbound policy reports NotConfigured. WinHTTP reports direct access/no proxy. No evidence supports a VPN/network-wide block; endpoint protection rules were not exhaustively enumerated.
+
+PHP executable: C:/Users/user/Downloads/php-8.5.12-1-nts-Win32-vs17-x64/php.exe. Active php.ini is in the same directory. OpenSSL is loaded: OpenSSL 3.5.9. The sockets extension is not loaded, but SMTP uses standard PHP stream sockets and successfully connected without it.
+
+## Configuration
+Active Laravel configuration is uncached and already uses smtp, scheme smtp, smtp.gmail.com, port 587. Credentials are present; From matches username. No MAIL_URL override is active. No credential values were printed. Retained Gmail App Password configuration and port 587. Added a 15-second socket timeout and require_tls=true in config/mail.php. TLS verification remains enabled. Installed Laravel MailManager recognizes scheme, and Symfony automatically negotiates STARTTLS. Port 465 would use smtps, but switching is unnecessary.
+
+Sources: https://developers.google.com/workspace/gmail/imap/imap-smtp and https://symfony.com/doc/current/mailer.html . If a different production network blocks SMTP, a secure HTTPS transactional provider such as Postmark or Resend is an alternative, with a verified sending domain and server-side credentials; Laravel documents its API transports at https://laravel.com/framework/docs/13.x/mail . No provider switch was made.
+
+## Invitation improvements
+InvitationController catches TransportExceptionInterface (including SMTP connection/authentication/provider transport errors) and returns safe validation feedback, with no raw exception message. Logs contain invitation ID and exception class only. Pending records and valid tokens are preserved after failure; pending denotes acceptance state, not delivery state. The coach's team page now exposes a CSRF-protected Resend Invitation action. The resend endpoint checks coach ownership, active/unexpired state and existing membership. Tokens/expiration are unchanged on resend. Existing expired invitation renewal behavior remains on the normal send endpoint.
+
+An atomic shared-cache gate limits each invitation to one attempt per minute, including failures; existing coach-level route throttling also applies. A per-team/email cache lock serializes create/send requests and prevents concurrent duplicate creation through these endpoints. External mail is not sent inside a database transaction. Success text says submitted to the mail server, not inbox delivered. No persistent provider delivery history or delivery webhooks were added; pending invitations can be resent regardless of whether their earlier submission failed. Cache clearing can reset the cooldown, and SMTP timeouts after acceptance can make delivery ambiguous, so exactly-once delivery cannot be guaranteed.
+
+Modified: config/mail.php, InvitationController, routes/web.php, resources/views/teams/show.blade.php. Added tests/Feature/InvitationResendTest.php. No database migration or data reset.
+
+## Verification
+Full application suite: 56 passed, 329 assertions. Audit: 20 passed, 55 assertions. Route listing, Blade compilation and Vite production build passed. Automated tests use fake/mock/array mail and no real recipients. New tests cover transport failure, safe errors, preserved invitation, token/expiry reuse, cooldown, duplicate prevention, successful resend, unauthorized and expired resend. Existing acceptance and invitation security tests pass.
+
+## Real delivery status
+Gmail TCP and verified STARTTLS: confirmed outside sandbox. Gmail authentication: not tested. Real invitation submission: not performed because no explicitly authorized test recipient was supplied. Inbox receipt: not confirmed. Recipient-side confirmation is necessary even after SMTP acceptance. Local APP_URL is a loopback address, so links sent to someone on another device require an intentionally configured reachable application URL; do not expose invitation tokens in logs or reports. Real-link acceptance remains to be checked after an authorized submission; automated acceptance checks pass.

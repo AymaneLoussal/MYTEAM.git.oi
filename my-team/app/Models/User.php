@@ -3,7 +3,6 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,16 +11,16 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 
 #[Fillable(['name', 'email', 'password', 'avatar'])]
-#[Hidden(['password', 'remember_token'])]
+#[Hidden(['password', 'remember_token', 'notes'])]
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-protected $fillable = ['name', 'email', 'password', 'avatar', 'notes'];
+    protected $fillable = ['name', 'email', 'password', 'avatar'];
 
     protected $appends = ['avatar_url'];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token', 'notes'];
 
     protected function casts(): array
     {
@@ -61,11 +60,12 @@ protected $fillable = ['name', 'email', 'password', 'avatar', 'notes'];
      */
     public function getAvatarUrlAttribute(): ?string
     {
-        return $this->avatar ? Storage::url($this->avatar) : asset('images/default-avatar.svg');
+        return $this->avatar ? Storage::disk('public')->url($this->avatar) : asset('images/default-avatar.svg');
     }
+
     public function userInvitations()
     {
         return $this->hasMany(Invitation::class);
     }
 }
-// User Model Docblock placeholder 
+// User Model Docblock placeholder

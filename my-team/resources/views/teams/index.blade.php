@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta content="width=device=device-width, initial-scale=1.0" name="viewport" />
     <title>Teams | Tactical Sanctum</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Inter:wght@100..900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    @include('components.assets')
+
+
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #121413; color: #e2e3e0; }
         h1, h2, h3 { font-family: 'Manrope', sans-serif; }
@@ -14,19 +14,9 @@
     </style>
 </head>
 <body class="bg-background text-on-surface antialiased min-h-screen flex flex-col">
-    <header class="bg-[#121413] sticky top-0 z-50">
-        <div class="flex justify-between items-center px-8 py-4">
-            <a href="{{ route('dashboard') }}" class="text-2xl font-black tracking-tighter text-[#a1d494]">Tactical Sanctum</a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="text-[#b9cbbe] hover:text-[#a1d494] transition-colors">
-                    <span class="material-symbols-outlined">logout</span>
-                </button>
-            </form>
-        </div>
-    </header>
+    @include('components.navigation')
 
-    <main class="flex-grow p-6 md:p-12">
+    <main id="main-content" tabindex="-1" class="flex-grow p-6 md:p-12">
         <div class="max-w-6xl mx-auto">
             <div class="mb-8">
                 <a href="{{ route('dashboard') }}" class="text-primary hover:text-primary/80 text-sm flex items-center gap-2 mb-4">

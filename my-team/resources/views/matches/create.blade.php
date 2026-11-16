@@ -1,38 +1,38 @@
 <x-layouts.app title="Create Match">
-    <div class="mx-auto max-w-2xl rounded-3xl border border-black/5 bg-white p-8 shadow-sm">
+    <div class="mx-auto max-w-2xl rounded-3xl border border-black/5 bg-surface-container p-8 shadow-sm">
         <h1 class="text-2xl font-black tracking-tight">Create match</h1>
-        <p class="mt-1 text-sm text-slate-600">Team: {{ $team->name }}</p>
+        <p class="mt-1 text-sm text-secondary">Team: {{ $team->name }}</p>
 
         <form class="mt-6 space-y-4" method="POST" action="{{ route('matches.store', $team) }}">
             @csrf
 
             <div>
-                <label class="block text-sm font-semibold">Starts at</label>
-                <input name="starts_at" type="datetime-local" value="{{ old('starts_at') }}" class="mt-1 w-full rounded-xl border-slate-200" required>
+                <label for="field-starts_at-1" class="block text-sm font-semibold">Starts at</label>
+                <input id="field-starts_at-1" name="starts_at" type="datetime-local" value="{{ old('starts_at') }}" class="mt-1 w-full rounded-xl border-outline-variant" required>
                 @error('starts_at')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2">
                 <div>
-                    <label class="block text-sm font-semibold">Opponent (optional)</label>
-                    <input name="opponent" value="{{ old('opponent') }}" class="mt-1 w-full rounded-xl border-slate-200">
+                    <label for="field-opponent-2" class="block text-sm font-semibold">Opponent (optional)</label>
+                    <input id="field-opponent-2" name="opponent" value="{{ old('opponent') }}" class="mt-1 w-full rounded-xl border-outline-variant">
                     @error('opponent')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold">Location (optional)</label>
-                    <input name="location" value="{{ old('location') }}" class="mt-1 w-full rounded-xl border-slate-200">
+                    <label for="field-location-3" class="block text-sm font-semibold">Location (optional)</label>
+                    <input id="field-location-3" name="location" value="{{ old('location') }}" class="mt-1 w-full rounded-xl border-outline-variant">
                     @error('location')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-semibold">Notes (optional)</label>
-                <textarea name="notes" rows="4" class="mt-1 w-full rounded-xl border-slate-200">{{ old('notes') }}</textarea>
+                <label for="field-notes-4" class="block text-sm font-semibold">Notes (optional)</label>
+                <textarea id="field-notes-4" name="notes" rows="4" class="mt-1 w-full rounded-xl border-outline-variant">{{ old('notes') }}</textarea>
                 @error('notes')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
 
             <div class="flex items-center justify-between gap-3">
-                <a class="rounded-xl border border-slate-200 px-4 py-2 font-bold text-slate-800 hover:bg-slate-50" href="{{ route('matches.team', $team) }}">Cancel</a>
+                <a class="rounded-xl border border-outline-variant px-4 py-2 font-bold text-on-surface hover:bg-surface-container-high" href="{{ route('matches.team', $team) }}">Cancel</a>
                 <button class="rounded-xl bg-[#1d4d2f] px-5 py-2.5 font-bold text-white hover:brightness-110" type="submit">Create</button>
             </div>
         </form>

@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta content="width=device=device-width, initial-scale=1.0" name="viewport" />
     <title>{{ $team->name }} | Tactical Sanctum</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Inter:wght@100..900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    @include('components.assets')
+
+
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #121413; color: #e2e3e0; }
         h1, h2, h3 { font-family: 'Manrope', sans-serif; }
@@ -14,19 +14,24 @@
     </style>
 </head>
 <body class="bg-background text-on-surface antialiased min-h-screen flex flex-col">
-    <header class="bg-[#121413] sticky top-0 z-50">
-        <div class="flex justify-between items-center px-8 py-4">
-            <a href="{{ route('dashboard') }}" class="text-2xl font-black tracking-tighter text-[#a1d494]">Tactical Sanctum</a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="text-[#b9cbbe] hover:text-[#a1d494] transition-colors">
-                    <span class="material-symbols-outlined">logout</span>
-                </button>
-            </form>
-        </div>
-    </header>
+    @include('components.navigation')
 
-    <main class="flex-grow p-6 md:p-12">
+    <main id="main-content" tabindex="-1" class="flex-grow p-6 md:p-12">
+        @include('components.feedback')
+        @if($isCoach)
+        <section class="max-w-6xl mx-auto mb-6 rounded-xl bg-surface-container p-5">
+            <h2 class="text-xl font-bold">Pending invitations</h2>
+            <p class="text-sm text-secondary">Pending means not yet accepted. It does not confirm email delivery.</p>
+            @foreach($team->invitations()->pending()->get() as $pending)
+                <div class="flex flex-wrap items-center justify-between gap-3 py-3">
+                    <span>{{ $pending->email }}</span>
+                    @if(!$pending->isExpired())
+                    <form method="POST" action="{{ route('invitations.resend', $pending) }}">@csrf<button class="rounded-lg bg-primary px-4 py-2 text-on-primary">Resend Invitation</button></form>
+                    @else <span>Expired — send a new invitation.</span> @endif
+                </div>
+            @endforeach
+        </section>
+        @endif
         <div class="max-w-6xl mx-auto">
             <div class="mb-8">
                 <a href="{{ route('teams.index') }}" class="text-primary hover:text-primary/80 text-sm flex items-center gap-2 mb-4">
@@ -44,10 +49,15 @@
                 </div>
             </div>
 
+            <nav aria-label="Team resources" class="flex flex-wrap gap-3 mb-6">
+                <a class="product-cta" href="{{ route('matches.team', $team) }}">Team matches</a>
+                <a class="product-cta" href="{{ route('trainings.team', $team) }}">Training schedule</a>
+                <a class="product-cta" href="{{ route('formations.team', $team) }}">Team formations</a>
+            </nav>
             <!-- Coach Controls -->
             @if($isCoach)
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <a href="{{ route('formations.team', $team) }}" class="flex items-center gap-3 bg-primary text-on-primary px-6 py-3 rounded-lg font-bold hover:bg-primary/90 transition-all">
+                    <a href="{{ route('formations.create', $team) }}" class="flex items-center gap-3 bg-primary text-on-primary px-6 py-3 rounded-lg font-bold hover:bg-primary/90 transition-all">
                         <span class="material-symbols-outlined">draw</span>
                         Create Formation
                     </a>
@@ -91,7 +101,7 @@
                                                 rows="2" 
                                                 class="w-full bg-surface-container border border-outline-variant/30 rounded-lg p-3 text-xs focus:ring-2 focus:ring-primary focus:border-transparent @error('notes') border-error @enderror"
                                                 placeholder="Add coach notes..."
-                                            >{{ old('notes', $player->notes ?? '') }}</textarea>
+                                            >{{ old('notes', $player->pivot->notes ?? '') }}</textarea>
                                             @error('notes')
                                                 <p class="text-error text-xs">{{ $message }}</p>
                                             @enderror
@@ -99,8 +109,8 @@
                                                 Save Notes
                                             </button>
                                         </form>
-                                    @elseif($player->notes && $isCoach)
-                                        <p class="text-xs text-secondary mt-3 italic p-3 bg-surface-container-low rounded-lg">{{ $player->notes }}</p>
+                                    @elseif($player->pivot->notes && $isCoach)
+                                        <p class="text-xs text-secondary mt-3 italic p-3 bg-surface-container-low rounded-lg">{{ $player->pivot->notes }}</p>
                                     @endif
                                 </div>
                             @endforeach
@@ -139,12 +149,6 @@
                                     Send Invite
                                 </button>
                             </form>
-                            
-                            @if(session('status'))
-                                <div class="mt-4 p-3 bg-primary/20 text-primary rounded-lg text-sm">
-                                    ✓ {{ session('status') }}
-                                </div>
-                            @endif
                         </div>
                     </div>
                 @else

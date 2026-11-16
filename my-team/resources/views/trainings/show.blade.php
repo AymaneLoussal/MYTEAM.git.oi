@@ -2,12 +2,12 @@
     <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
             <h1 class="text-3xl font-black tracking-tight">{{ $training->title }}</h1>
-            <p class="mt-1 text-sm text-slate-600">{{ $training->team->name }}</p>
+            <p class="mt-1 text-sm text-secondary">{{ $training->team->name }}</p>
         </div>
         <div class="flex items-center gap-2">
-            <a class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-800 hover:bg-slate-50" href="{{ route('trainings.team', $training->team) }}">Team schedule</a>
+            <a class="rounded-xl border border-outline-variant bg-surface-container px-4 py-2 font-bold text-on-surface hover:bg-surface-container-high" href="{{ route('trainings.team', $training->team) }}">Team schedule</a>
             @if ($isCoach)
-                <a class="rounded-xl border border-slate-200 bg-white px-4 py-2 font-bold text-slate-800 hover:bg-slate-50" href="{{ route('trainings.edit', $training) }}">Edit</a>
+                <a class="rounded-xl border border-outline-variant bg-surface-container px-4 py-2 font-bold text-on-surface hover:bg-surface-container-high" href="{{ route('trainings.edit', $training) }}">Edit</a>
                 <form method="POST" action="{{ route('trainings.destroy', $training) }}">
                     @csrf
                     @method('DELETE')
@@ -18,7 +18,7 @@
     </div>
 
     <div class="mt-8 grid gap-6 lg:grid-cols-3">
-        <div class="lg:col-span-2 rounded-3xl border border-black/5 bg-white p-6 shadow-sm">
+        <div class="lg:col-span-2 rounded-3xl border border-black/5 bg-surface-container p-6 shadow-sm">
             <h2 class="text-lg font-extrabold">Details</h2>
             <div class="mt-4 space-y-2 text-sm text-slate-700">
                 <p><span class="font-semibold">Date:</span> {{ $training->starts_at?->format('D, M j, Y') }}</p>
@@ -30,9 +30,9 @@
             <p class="mt-3 whitespace-pre-line text-sm text-slate-700">{{ $training->notes ?: 'No notes.' }}</p>
         </div>
 
-        <div class="rounded-3xl border border-black/5 bg-white p-6 shadow-sm">
+        <div class="rounded-3xl border border-black/5 bg-surface-container p-6 shadow-sm">
             <h2 class="text-lg font-extrabold">Rules</h2>
-            <p class="mt-2 text-sm text-slate-600">Players can view trainings. Only the coach can create, edit, or delete.</p>
+            <p class="mt-2 text-sm text-secondary">Players can view trainings. Only the coach can create, edit, or delete.</p>
         </div>
     </div>
 </x-layouts.app>

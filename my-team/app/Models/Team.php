@@ -3,12 +3,26 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Formation;
 use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::created(fn (Team $team) => app(\App\Services\TeamChat::class)->ensureGroup($team));
+        static::updated(function (Team $team) {
+            if ($team->wasChanged('name')) {
+                $team->conversations()->where('type', 'team_group')->update(['subject' => $team->name]);
+            }
+        });
+    }
+
+    public function conversations()
+    {
+        return $this->hasMany(Conversation::class);
+    }
 
     protected $fillable = ['name', 'coach_id'];
 
@@ -25,8 +39,9 @@ class Team extends Model
      */
     public function players()
     {
-        return $this->belongsToMany(User::class, 'team_user');
+        return $this->belongsToMany(User::class, 'team_user')->withPivot('notes');
     }
+
     /**
      * Invitations related to this team.
      */
@@ -49,6 +64,11 @@ class Team extends Model
     {
         return $this->hasMany(Formation::class);
     }
+
+    public function hasMember(User $user): bool
+    {
+        return $this->coach_id === $user->id || $this->players()->where('users.id', $user->id)->exists();
+    }
 }
-// Team Model Docblock placeholder 
-// Soft deletes stub added 
+// Team Model Docblock placeholder
+// Soft deletes stub added
