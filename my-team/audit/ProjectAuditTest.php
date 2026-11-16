@@ -145,8 +145,7 @@ class ProjectAuditTest extends TestCase
         [$coach, $team] = $this->coachTeam();
         $player = User::factory()->create();
         $team->players()->attach($player);
-        $chat = Conversation::create(['team_id'=>$team->id,'created_by'=>$coach->id,'type'=>'team_group','subject'=>'Audit']);
-        $chat->participants()->attach([$coach->id,$player->id]);
+        $chat = app(\App\Services\TeamChat::class)->ensureGroup($team);
         $this->withSession(['user_id'=>$player->id])->post('/teams/'.$team->id.'/leave')->assertRedirect('/teams');
         $this->get('/chat/'.$chat->id)->assertForbidden();
     }
