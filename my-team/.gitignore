@@ -3,6 +3,7 @@
 .env
 .env.backup
 .env.production
+.env.docker
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -12,15 +13,18 @@
 /.vscode
 /.zed
 /auth.json
+/backups
 /node_modules
 /.npm-cache
 /public/build
 /public/hot
 /public/storage
+/smtp-laravel-test.php
 /storage/*.key
 /storage/pail
 /vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/results.xml
 .phpunit.result.cache 
