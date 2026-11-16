@@ -9,6 +9,21 @@ class Team extends Model
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::created(fn (Team $team) => app(\App\Services\TeamChat::class)->ensureGroup($team));
+        static::updated(function (Team $team) {
+            if ($team->wasChanged('name')) {
+                $team->conversations()->where('type', 'team_group')->update(['subject' => $team->name]);
+            }
+        });
+    }
+
+    public function conversations()
+    {
+        return $this->hasMany(Conversation::class);
+    }
+
     protected $fillable = ['name', 'coach_id'];
 
     /**

@@ -37,14 +37,15 @@ class SecurityRegressionTest extends TestCase
         $outsider = User::factory()->create();
         $this->withSession(['user_id' => $outsider->id]);
         foreach (['team_group', 'team_announcement', 'coach_player_private'] as $type) {
-            $this->postJson('/chat/conversations', ['team_id' => $team->id, 'type' => $type, 'player_id' => $player->id])->assertForbidden();
+            $response = $this->postJson('/chat/conversations', ['team_id' => $team->id, 'type' => $type, 'player_id' => $player->id]);
+            $type === 'coach_player_private' ? $response->assertForbidden() : $response->assertUnprocessable();
         }
         foreach (['matches', 'trainings', 'formations', 'invite'] as $action) {
             $this->postJson('/teams/'.$team->id.'/'.$action, [])->assertForbidden();
         }
         $this->patchJson('/teams/'.$team->id.'/players/'.$player->id.'/notes', ['notes' => 'Attack'])->assertForbidden();
         $this->postJson('/teams/'.$team->id.'/join')->assertForbidden();
-        $this->assertDatabaseCount('conversations', 0);
+        $this->assertDatabaseCount('conversations', 1);
         $this->assertDatabaseCount('team_user', 1);
     }
 
@@ -56,7 +57,7 @@ class SecurityRegressionTest extends TestCase
         $this->withSession(['user_id' => $player->id]);
         $this->post('/chat/conversations', ['team_id' => $team->id, 'type' => 'coach_player_private', 'player_id' => $other->id])->assertForbidden();
         $this->post('/chat/conversations', ['team_id' => $team->id, 'type' => 'coach_player_private', 'player_id' => $player->id])->assertRedirect();
-        $chat = Conversation::firstOrFail();
+        $chat = Conversation::where('type', 'coach_player_private')->firstOrFail();
         $this->assertEqualsCanonicalizing([$coach->id, $player->id], $chat->participants()->pluck('users.id')->all());
         $this->withSession(['user_id' => $other->id])->getJson('/chat/'.$chat->id)->assertForbidden();
         $this->postJson('/chat/messages', ['conversation_id' => $chat->id, 'message' => 'No'])->assertForbidden();
@@ -68,9 +69,10 @@ class SecurityRegressionTest extends TestCase
         $this->withSession(['user_id' => $coach->id]);
         $this->postJson('/chat/conversations', ['team_id' => $team->id, 'type' => 'invalid'])->assertUnprocessable();
         $this->postJson('/chat/conversations', ['team_id' => $team->id, 'type' => 'coach_player_private', 'player_id' => 99999])->assertForbidden();
-        $this->assertDatabaseCount('conversations', 0);
-        $this->post('/chat/conversations', ['team_id' => $team->id, 'type' => 'team_announcement'])->assertRedirect();
-        $chat = Conversation::firstOrFail();
+        $this->assertDatabaseCount('conversations', 1);
+        $this->postJson('/chat/conversations', ['team_id' => $team->id, 'type' => 'team_announcement'])->assertUnprocessable();
+        $chat = Conversation::create(['team_id' => $team->id, 'type' => 'team_announcement', 'created_by' => $coach->id]);
+        $chat->participants()->attach([$coach->id, $player->id]);
         $this->postJson('/chat/messages', ['conversation_id' => $chat->id, 'message' => 'Announcement'])->assertCreated();
         $this->withSession(['user_id' => $player->id])->postJson('/chat/messages', ['conversation_id' => $chat->id, 'message' => 'No'])->assertForbidden();
         $this->get('/chat/'.$chat->id)->assertOk();

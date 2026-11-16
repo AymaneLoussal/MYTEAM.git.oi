@@ -29,6 +29,7 @@ class TeamMembership
                 $this->ensureAvailable($user, 'team');
                 $team->players()->syncWithoutDetaching([$user->id]);
             }
+            app(TeamChat::class)->ensureGroup($team);
             foreach (Conversation::where('team_id', $team->id)->whereIn('type', ['team_group', 'team_announcement'])->get() as $chat) {
                 $chat->participants()->syncWithoutDetaching([$user->id]);
             }
@@ -41,7 +42,7 @@ class TeamMembership
             User::lockForUpdate()->findOrFail($user->id);
             $team->players()->detach($user->id);
             DB::table('conversation_participants')->where('user_id', $user->id)
-                ->whereIn('conversation_id', Conversation::where('team_id', $team->id)->select('id'))->delete();
+                ->whereIn('conversation_id', Conversation::where('team_id', $team->id)->whereIn('type', ['team_group', 'team_announcement'])->select('id'))->delete();
             DB::table('match_user')->where('user_id', $user->id)
                 ->whereIn('match_id', $team->matches()->select('id'))->delete();
         });
