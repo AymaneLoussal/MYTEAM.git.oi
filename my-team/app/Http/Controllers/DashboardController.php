@@ -24,6 +24,7 @@ class DashboardController extends Controller
 
         $pendingInvitations = Invitation::with(['team', 'coach'])
             ->pending()
+            ->where(function ($query) { $query->whereNull('expires_at')->orWhere('expires_at', '>', now()); })
             ->where(function ($query) use ($user) {
                 $query->where('user_id', $user->id)->orWhere('email', $user->email);
             })

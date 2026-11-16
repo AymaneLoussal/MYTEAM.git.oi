@@ -17,6 +17,15 @@ class InvitationController extends Controller
 {
     public function send(Request $request, Team $team)
     {
+        $email = strtolower(trim((string) $request->input('email')));
+        $lock = \Illuminate\Support\Facades\Cache::lock('invite-create:'.$team->id.':'.hash('sha256', $email), 120);
+        if (! $lock->get()) throw ValidationException::withMessages(['email' => 'An invitation request is already in progress.']);
+        try { return $this->sendInvitation($request, $team); }
+        finally { $lock->release(); }
+    }
+
+    private function sendInvitation(Request $request, Team $team)
+    {
         $coach = $this->currentUser();
 
         if ($team->coach_id !== $coach->id) {
@@ -47,6 +56,10 @@ class InvitationController extends Controller
             throw ValidationException::withMessages(['email' => 'A pending invitation already exists for this email']);
         }
 
+        if (config('mail.default') === 'log') {
+            throw ValidationException::withMessages(['email' => 'Email delivery is not configured. Ask an administrator to configure a mail transport before sending invitations.']);
+        }
+
         $payload = [
             'team_id' => $team->id,
             'user_id' => $targetUser?->id,
@@ -67,14 +80,38 @@ class InvitationController extends Controller
 
         $invitation->load(['team', 'coach', 'user']);
 
-        Mail::to($email)->send(new TeamInvitationMail($invitation));
+        return $this->deliver($request, $invitation);
+    }
+
+    public function resend(Request $request, Invitation $invitation)
+    {
+        abort_unless($invitation->team->coach_id === $this->currentUser()->id, 403);
+        abort_if($invitation->status !== 'pending' || $invitation->isExpired(), 410, 'This invitation is no longer active.');
+        $member = User::whereRaw('LOWER(email) = ?', [strtolower($invitation->email)])->first();
+        abort_if($member && $invitation->team->hasMember($member), 422, 'This user already belongs to the team.');
+        if (config('mail.default') === 'log') throw ValidationException::withMessages(['email'=>'Email delivery is not configured.']);
+        return $this->deliver($request, $invitation);
+    }
+
+    private function deliver(Request $request, Invitation $invitation)
+    {
+        $key = 'invitation-delivery:'.$invitation->id;
+        if (! \Illuminate\Support\Facades\Cache::add($key, true, 60)) {
+            throw ValidationException::withMessages(['email'=>'Please wait one minute before resending this invitation.']);
+        }
+        try {
+            Mail::to($invitation->email)->send(new TeamInvitationMail($invitation));
+        } catch (\Symfony\Component\Mailer\Exception\TransportExceptionInterface $exception) {
+            \Illuminate\Support\Facades\Log::warning('Invitation transport submission failed', ['invitation_id'=>$invitation->id, 'exception_type'=>get_class($exception)]);
+            throw ValidationException::withMessages(['email'=>'Email submission failed. The invitation remains pending; wait one minute, then use Resend Invitation. Inbox delivery has not been confirmed.']);
+        }
 
         if (! $request->expectsJson()) {
-            return back()->with('status', 'Invitation sent.');
+            return back()->with('status', 'Invitation submitted to the mail server. Inbox delivery is not yet confirmed.');
         }
 
         return response()->json([
-            'message' => 'Invitation sent successfully',
+            'message' => 'Invitation submitted to the mail server; inbox delivery is not confirmed.',
             'invitation' => $invitation,
         ], 201);
     }

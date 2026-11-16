@@ -14,13 +14,9 @@
     </style>
 </head>
 <body class="bg-background text-on-surface antialiased min-h-screen flex flex-col">
-    <header class="bg-[#121413] sticky top-0 z-50">
-        <div class="flex justify-between items-center px-8 py-4">
-            <a href="{{ route('dashboard') }}" class="text-2xl font-black tracking-tighter text-[#a1d494]">Tactical Sanctum</a>
-        </div>
-    </header>
+    @include('components.public-navigation')
 
-    <main class="flex-grow flex items-center justify-center p-6 md:p-12">
+    <main id="main-content" tabindex="-1" class="flex-grow flex items-center justify-center p-6 md:p-12">
         <div class="w-full max-w-2xl">
             @include('components.feedback')
             @if($invitation->status === 'expired' || ($invitation->status === 'pending' && $invitation->isExpired()))
@@ -43,6 +39,8 @@
                 </div>
             @elseif($invitation->status === 'rejected')
                 <h1 class="text-2xl font-bold">Invitation Declined</h1>
+            @elseif($invitation->status !== 'pending')
+                <h1 class="text-2xl font-bold">Invitation unavailable</h1><p>This invitation can no longer be used.</p>
             @else
                 <div class="bg-surface-container-high p-8 md:p-10 rounded-lg border border-outline-variant/10">
                     <div class="text-center mb-8">
@@ -66,7 +64,9 @@
                         </div>
                     </div>
 
-                    @if($currentUser)
+                    @if($currentUser && strcasecmp($currentUser->email, $invitation->email) !== 0)
+                        <p role="alert">Sign in with the invited email address to respond to this invitation.</p>
+                    @elseif($currentUser)
                         <!-- User is logged in -->
                         <div class="mb-6 p-4 bg-primary/10 rounded-lg">
                             <p class="text-sm text-secondary">Logged in as: <span class="text-primary font-bold">{{ $currentUser->email }}</span></p>
@@ -124,10 +124,10 @@
                             <form method="POST" action="{{ route('invitations.register', $invitation->token) }}" class="space-y-4">
                                 @csrf
                                 <div>
-                                    <label class="block text-sm font-bold mb-2">Full Name</label>
-                                    <input 
-                                        type="text" 
-                                        name="name" 
+                                    <label for="field-name-1" class="block text-sm font-bold mb-2">Full Name</label>
+                                    <input id="field-name-1"
+                                        type="text"
+                                        name="name"
                                         required
                                         class="w-full bg-surface-container border border-outline-variant/30 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent @error('name') border-error @enderror"
                                         placeholder="Your name"
@@ -139,8 +139,8 @@
 
                                 <div>
                                     <label class="block text-sm font-bold mb-2">Email ({{ $invitation->email }})</label>
-                                    <input 
-                                        type="email" 
+                                    <input
+                                        type="email"
                                         value="{{ $invitation->email }}"
                                         disabled
                                         class="w-full bg-surface-container border border-outline-variant/30 rounded-lg p-3 text-sm text-secondary"
@@ -148,10 +148,10 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-bold mb-2">Password</label>
-                                    <input 
-                                        type="password" 
-                                        name="password" 
+                                    <label for="field-password-2" class="block text-sm font-bold mb-2">Password</label>
+                                    <input id="field-password-2"
+                                        type="password"
+                                        name="password"
                                         required
                                         class="w-full bg-surface-container border border-outline-variant/30 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent @error('password') border-error @enderror"
                                         placeholder="At least 6 characters"
@@ -162,10 +162,10 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-bold mb-2">Confirm Password</label>
-                                    <input 
-                                        type="password" 
-                                        name="password_confirmation" 
+                                    <label for="field-password_confirmation-3" class="block text-sm font-bold mb-2">Confirm Password</label>
+                                    <input id="field-password_confirmation-3"
+                                        type="password"
+                                        name="password_confirmation"
                                         required
                                         class="w-full bg-surface-container border border-outline-variant/30 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent"
                                         placeholder="Confirm your password"

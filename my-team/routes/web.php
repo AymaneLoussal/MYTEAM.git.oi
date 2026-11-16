@@ -33,6 +33,7 @@ Route::post('/invitations/{token}/register-and-accept', [InvitationController::c
 Route::match(['post', 'patch'], '/invitations/{token}/reject', [InvitationController::class, 'reject'])->middleware('auth.custom')->name('invitations.reject');
 
 Route::middleware('auth.custom')->group(function () {
+    Route::post('/invitations/{invitation}/resend', [InvitationController::class, 'resend'])->middleware('throttle:invitations')->name('invitations.resend');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/teams', [DashboardController::class, 'createTeam'])->name('dashboard.teams.create');
     Route::post('/dashboard/teams/{team}/invite', [DashboardController::class, 'sendInvite'])->middleware('throttle:invitations')->name('dashboard.teams.invite');
